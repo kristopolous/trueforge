@@ -8,6 +8,7 @@ describe('resolveRoutesConfig', () => {
       basename: '',
       root: '/',
       settings: '/settings',
+      library: '/library',
       agent: '/agents/:agentName',
       session: '/sessions/:sessionId',
     });
@@ -38,6 +39,7 @@ describe('buildPath', () => {
   it('builds each place', () => {
     expect(buildPath({ type: 'root' }, routes)).toBe('/');
     expect(buildPath({ type: 'settings' }, routes)).toBe('/settings');
+    expect(buildPath({ type: 'library' }, routes)).toBe('/library');
     expect(buildPath({ type: 'agent', agentName: 'code-helper' }, routes)).toBe('/agents/code-helper');
     expect(buildPath({ type: 'session', sessionId: 'abc123' }, routes)).toBe('/sessions/abc123');
   });
@@ -47,8 +49,9 @@ describe('buildPath', () => {
   });
 
   it('returns null for disabled places', () => {
-    const disabled = resolveRoutesConfig({ paths: { settings: false, agent: false } });
+    const disabled = resolveRoutesConfig({ paths: { settings: false, library: false, agent: false } });
     expect(buildPath({ type: 'settings' }, disabled)).toBeNull();
+    expect(buildPath({ type: 'library' }, disabled)).toBeNull();
     expect(buildPath({ type: 'agent', agentName: 'x' }, disabled)).toBeNull();
   });
 });
@@ -59,6 +62,7 @@ describe('matchPath', () => {
   it('matches each place and decodes params', () => {
     expect(matchPath('/', routes)).toEqual({ type: 'root' });
     expect(matchPath('/settings', routes)).toEqual({ type: 'settings' });
+    expect(matchPath('/library', routes)).toEqual({ type: 'library' });
     expect(matchPath('/agents/a%2Fb', routes)).toEqual({ type: 'agent', agentName: 'a/b' });
     expect(matchPath('/sessions/xyz', routes)).toEqual({ type: 'session', sessionId: 'xyz' });
   });
@@ -84,6 +88,7 @@ describe('matchPath', () => {
     for (const place of [
       { type: 'root' as const },
       { type: 'settings' as const },
+      { type: 'library' as const },
       { type: 'agent' as const, agentName: 'weird name/1' },
       { type: 'session' as const, sessionId: 'sess 9' },
     ]) {

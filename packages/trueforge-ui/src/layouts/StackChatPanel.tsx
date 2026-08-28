@@ -3,6 +3,7 @@
 import { lazy, Suspense, useEffect, useState, type ReactNode } from 'react';
 
 import { useAui } from '../assistant-ui.js';
+import { AgentsLibrary } from '../atoms/AgentsLibrary.js';
 import { NamedAgentHeaderLabel } from '../atoms/NamedAgentHeaderLabel.js';
 import { ShellActions } from '../atoms/ShellActions.js';
 import { auiButtonClass } from '../atoms/lib/buttonClasses.js';
@@ -35,6 +36,7 @@ export function StackChatPanel({ className, threadHeaderEnd }: StackChatPanelPro
   const SelectAgentEmptyState = useSlot('SelectAgentEmptyState');
   const isIdle = shell?.mode.status === 'idle';
   const settingsOpen = shell?.settingsOpen === true;
+  const libraryOpen = shell?.libraryOpen === true;
 
   useEffect(() => {
     if (isIdle) return;
@@ -60,6 +62,10 @@ export function StackChatPanel({ className, threadHeaderEnd }: StackChatPanelPro
           >
             <TruefoundrySettingsBuilder />
           </Suspense>
+        </div>
+      ) : libraryOpen ? (
+        <div className="min-h-0 flex-1">
+          <AgentsLibrary onSelectAgent={() => setView('thread')} />
         </div>
       ) : view === 'list' ? (
         <ThreadListContainer onThreadOpen={() => setView('thread')} />

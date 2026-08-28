@@ -29,6 +29,7 @@ export function ShellRouteSync({
 
   const snapshot: ShellSnapshot = {
     settingsOpen: shell.settingsOpen,
+    libraryOpen: shell.libraryOpen,
     pendingSessionId: shell.pendingSessionId,
     activeRemoteId,
     mode: shell.mode,
@@ -87,15 +88,21 @@ export function ShellRouteSync({
         case 'settings':
           shell.setSettingsOpen(true);
           return;
+        case 'library':
+          shell.setLibraryOpen(true);
+          return;
         case 'session':
+          shell.setLibraryOpen(false);
           if (shell.pendingSessionId === target.sessionId || activeRemoteId === target.sessionId) return;
           openSession(target.sessionId);
           return;
         case 'agent':
+          shell.setLibraryOpen(false);
           shell.selectLibraryAgent({ isMutable: false, agentName: target.agentName });
           return;
         case 'root':
           shell.setSettingsOpen(false);
+          shell.setLibraryOpen(false);
           switch (shell.agentConfigMode) {
             case 'AgentLibrary':
               shell.openLibraryHome();
@@ -124,6 +131,8 @@ export function ShellRouteSync({
 
     if (urlPlace.type === 'settings') {
       shell.setSettingsOpen(true);
+    } else if (urlPlace.type === 'library') {
+      shell.setLibraryOpen(true);
     } else {
       const chatPlace = deriveChatPlace(snapshot);
       if (!placesEqual(chatPlace, urlPlace)) applyPlace(urlPlace);
@@ -190,6 +199,9 @@ export function ShellRouteSync({
     if (urlPlace.type !== 'settings' && shell.settingsOpen) {
       // Leaving settings via Back to a chat place.
       shell.setSettingsOpen(false);
+    }
+    if (urlPlace.type !== 'library' && shell.libraryOpen) {
+      shell.setLibraryOpen(false);
     }
     applyPlace(urlPlace);
     // eslint-disable-next-line react-hooks/exhaustive-deps

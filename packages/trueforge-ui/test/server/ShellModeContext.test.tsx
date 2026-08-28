@@ -68,6 +68,22 @@ describe('ShellModeProvider', () => {
     expect(result.current.settingsSection).toBe('connectors');
   });
 
+  it('closes the library when settings opens and vice versa', () => {
+    const { result } = renderHook(() => useShellMode(), { wrapper: wrap() });
+
+    act(() => result.current.setLibraryOpen(true));
+    expect(result.current.libraryOpen).toBe(true);
+    expect(result.current.settingsOpen).toBe(false);
+
+    act(() => result.current.setSettingsOpen(true));
+    expect(result.current.settingsOpen).toBe(true);
+    expect(result.current.libraryOpen).toBe(false);
+
+    act(() => result.current.setLibraryOpen(true));
+    expect(result.current.libraryOpen).toBe(true);
+    expect(result.current.settingsOpen).toBe(false);
+  });
+
   it('defaults to AgentLibraryWithComposer (mutable + library)', () => {
     const { result } = renderHook(() => useShellMode(), { wrapper: wrap() });
     expect(result.current.mode).toMatchObject({ status: 'active', isMutable: true, locked: false });

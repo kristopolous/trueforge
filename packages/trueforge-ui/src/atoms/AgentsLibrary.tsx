@@ -1,21 +1,18 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 import { Icon } from '../icons/Icon.js';
-import { libraryAgentId, useOptionalShellMode } from '../server/ShellModeContext.js';
+import { libraryAgentId, useShellMode } from '../server/ShellModeContext.js';
 import type { AgentLibraryEntry, AgentSpec } from '../server/types.js';
 import { auiButtonClass } from './lib/buttonClasses.js';
 import { cn } from './lib/cn.js';
 import { useSearchAgentsList } from './lib/useSearchAgentsList.js';
-import { CenteredModal } from './primitives/CenteredModal.js';
 import SearchInput from './primitives/SearchInput.js';
 import { Skeleton } from './primitives/Skeleton.js';
 import { Tooltip } from './primitives/Tooltip.js';
 
 export type AgentsLibraryProps = {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
   onSelectAgent?: (agentName: string) => void;
 };
 
@@ -111,16 +108,33 @@ function AgentLibraryRow({ agent, showEdit, onTry, onEdit }: AgentLibraryRowProp
   );
 }
 
-export function AgentsLibrary({ open, onOpenChange, onSelectAgent }: AgentsLibraryProps) {
-  const shell = useOptionalShellMode();
+export function AgentsLibrary({ onSelectAgent }: AgentsLibraryProps) {
+  const shell = useShellMode();
   const [query, setQuery] = useState('');
+  const open = shell.libraryOpen;
 
-  const canEdit = shell?.isComposerEnabled === true;
-  const agentsListEpoch = shell?.agentsListEpoch ?? 0;
+  const canEdit = shell.isComposerEnabled === true;
+  const agentsListEpoch = shell.agentsListEpoch;
 
   useEffect(() => {
     if (!open) setQuery('');
   }, [open]);
+
+  const closeLibrary = useCallback(() => {
+    shell.setLibraryOpen(false);
+    setQuery('');
+  }, [shell]);
+
+  useEffect(() => {
+    if (!open) return;
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key !== 'Escape') return;
+      event.stopImmediatePropagation();
+      closeLibrary();
+    };
+    window.addEventListener('keydown', onKeyDown, true);
+    return () => window.removeEventListener('keydown', onKeyDown, true);
+  }, [closeLibrary, open]);
 
   const { agents, isInitialLoading, isSearching, loadingMore, error, hasMore, listRef, sentinelRef } =
     useSearchAgentsList({
@@ -129,15 +143,10 @@ export function AgentsLibrary({ open, onOpenChange, onSelectAgent }: AgentsLibra
       refreshKey: agentsListEpoch,
     });
 
-  const closeLibrary = () => {
-    onOpenChange(false);
-    setQuery('');
-  };
-
   const handleTry = (agent: AgentLibraryEntry) => {
     closeLibrary();
     onSelectAgent?.(agent.name);
-    shell?.selectLibraryAgent({
+    shell.selectLibraryAgent({
       isMutable: false,
       agentId: libraryAgentId(agent),
       agentName: agent.name,
@@ -147,7 +156,7 @@ export function AgentsLibrary({ open, onOpenChange, onSelectAgent }: AgentsLibra
   const handleEdit = (agent: AgentLibraryEntry, agentSpec: AgentSpec) => {
     closeLibrary();
     onSelectAgent?.(agent.name);
-    shell?.selectLibraryAgent({
+    shell.selectLibraryAgent({
       isMutable: true,
       agentId: libraryAgentId(agent),
       agentName: agent.name,
@@ -155,8 +164,23 @@ export function AgentsLibrary({ open, onOpenChange, onSelectAgent }: AgentsLibra
     });
   };
 
+  if (!open) return null;
+
   return (
-    <CenteredModal open={open} onOpenChange={onOpenChange} title="Agents Library">
+    <div className="flex h-full min-h-0 w-full flex-col bg-primary-bg">
+      <header className="flex shrink-0 items-center gap-2 border-b border-border px-2 py-1.5">
+        <button
+          type="button"
+          aria-label="Back"
+          title="Back"
+          className={auiButtonClass({ variant: 'ghost', size: 'icon' })}
+          onClick={closeLibrary}
+        >
+          <Icon name="arrow-left" />
+        </button>
+        <h1 className="text-lg font-semibold tracking-tight text-text-primary">Agents Library</h1>
+      </header>
+
       <div className="bg-secondary-bg/40 flex min-h-0 flex-1 flex-col">
         <div className="shrink-0 border-b border-border px-4 py-3">
           <SearchInput query={query} setQuery={setQuery} placeholder="Search agents" />
@@ -216,7 +240,7 @@ export function AgentsLibrary({ open, onOpenChange, onSelectAgent }: AgentsLibra
           )}
         </div>
       </div>
-    </CenteredModal>
+    </div>
   );
 }
 
