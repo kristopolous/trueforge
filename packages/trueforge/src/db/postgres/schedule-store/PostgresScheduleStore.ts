@@ -203,6 +203,9 @@ export class PostgresScheduleStore implements IScheduleStore<Transaction<Databas
     if (input.agent_name !== undefined) {
       query = query.where('agent_name', '=', input.agent_name);
     }
+    if (input.created_by !== undefined) {
+      query = query.where('created_by', '=', input.created_by);
+    }
     const rows = await query.orderBy('created_at', 'desc').orderBy('id').execute();
     return rows.map(toScheduleRecord);
   }

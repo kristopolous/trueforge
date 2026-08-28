@@ -77,12 +77,29 @@ export function validateManifest(manifest: Pick<ScheduleManifest, 'cron' | 'time
   }
 }
 
+const FORBIDDEN_SCHEDULE_ACCESS = 'Only the schedule creator can access this schedule';
+
+/**
+ * A schedule is visible to its creator, and to any admin.
+ *
+ * The role is read directly rather than via {@link isAdmin}, which reports admin
+ * whenever auth is disabled — irrelevant here, since the sole standalone identity
+ * already carries the admin role and owns everything it created.
+ */
+function canAccessSchedule(user: UserContext, createdBy: string): boolean {
+  return user.role === 'admin' || user.userRef === createdBy;
+}
+
 export function createSchedulesRouter<TTransaction>(deps: SchedulesRouterDeps<TTransaction>) {
   const listHandler: RouteHandler<typeof listSchedulesRoute> = async c => {
     const { agent_name: agentName } = c.req.valid('query');
+    const user = deps.resolveUserContext(c);
+    // Admins see every schedule; a regular user is scoped to their own via the
+    // store's `created_by` filter (never a client-supplied param).
     const records = await deps.scheduleStore.listSchedules({
       tenant_id: TENANT_ID,
       agent_name: agentName,
+      created_by: user.role === 'admin' ? undefined : user.userRef,
     });
     return c.json({ data: records.map(toWireSchedule) }, 200);
   };
@@ -133,6 +150,9 @@ export function createSchedulesRouter<TTransaction>(deps: SchedulesRouterDeps<TT
     if (record === undefined) {
       return c.json({ error: { message: `Schedule not found: ${scheduleId}` } }, 404);
     }
+    if (!canAccessSchedule(deps.resolveUserContext(c), record.created_by)) {
+      return c.json({ error: { message: FORBIDDEN_SCHEDULE_ACCESS } }, 403);
+    }
     return c.json({ data: toWireSchedule(record) }, 200);
   };
 
@@ -151,6 +171,14 @@ export function createSchedulesRouter<TTransaction>(deps: SchedulesRouterDeps<TT
     const body = c.req.valid('json');
 
     validateManifest(body.manifest);
+
+    const existing = await deps.scheduleStore.getSchedule({ tenant_id: TENANT_ID, id: scheduleId, forUpdate: false });
+    if (existing === undefined) {
+      return c.json({ error: { message: `Schedule not found: ${scheduleId}` } }, 404);
+    }
+    if (!canAccessSchedule(deps.resolveUserContext(c), existing.created_by)) {
+      return c.json({ error: { message: FORBIDDEN_SCHEDULE_ACCESS } }, 403);
+    }
 
     let record: ScheduleRecord | undefined;
     try {
@@ -185,6 +213,13 @@ export function createSchedulesRouter<TTransaction>(deps: SchedulesRouterDeps<TT
 
   const deleteHandler: RouteHandler<typeof deleteScheduleRoute> = async c => {
     const { schedule_id: scheduleId } = c.req.valid('param');
+    const record = await deps.scheduleStore.getSchedule({ tenant_id: TENANT_ID, id: scheduleId, forUpdate: false });
+    if (record === undefined) {
+      return c.json({}, 200);
+    }
+    if (!canAccessSchedule(deps.resolveUserContext(c), record.created_by)) {
+      return c.json({ error: { message: FORBIDDEN_SCHEDULE_ACCESS } }, 403);
+    }
     await deps.scheduleStore.deleteSchedule({ tenant_id: TENANT_ID, id: scheduleId });
     return c.json({}, 200);
   };

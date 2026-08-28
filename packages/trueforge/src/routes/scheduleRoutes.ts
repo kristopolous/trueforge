@@ -93,6 +93,10 @@ export const getScheduleRoute = createRoute({
       content: { 'application/json': { schema: GetScheduleResponseSchema } },
       description: 'The schedule.',
     },
+    403: {
+      content: { 'application/json': { schema: RequestErrorResponseSchema } },
+      description: 'The caller is not the schedule creator.',
+    },
     404: {
       content: { 'application/json': { schema: RequestErrorResponseSchema } },
       description: 'Not found.',
@@ -124,6 +128,10 @@ export const putScheduleRoute = createRoute({
       content: { 'application/json': { schema: RequestErrorResponseSchema } },
       description: 'Invalid cron.',
     },
+    403: {
+      content: { 'application/json': { schema: RequestErrorResponseSchema } },
+      description: 'The caller is not the schedule creator.',
+    },
     409: {
       content: { 'application/json': { schema: RequestErrorResponseSchema } },
       description: 'The name is already taken for this agent, or the schedule was modified concurrently (retry).',
@@ -150,6 +158,10 @@ export const deleteScheduleRoute = createRoute({
     200: {
       content: { 'application/json': { schema: DeleteScheduleResponseSchema } },
       description: 'Deleted.',
+    },
+    403: {
+      content: { 'application/json': { schema: RequestErrorResponseSchema } },
+      description: 'The caller is not the schedule creator.',
     },
     401: {
       content: { 'application/json': { schema: RequestErrorResponseSchema } },

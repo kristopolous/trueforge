@@ -11,6 +11,7 @@ import { ListSchedulesResponseSchema } from '../../../src/schemas/schedule';
 
 const ALICE: UserContext = { userRef: 'alice', role: 'user' };
 const BOB: UserContext = { userRef: 'bob', role: 'user' };
+const ADMIN: UserContext = { userRef: 'root', role: 'admin' };
 
 const scheduleBody = {
   agent_name: 'reporter',
@@ -47,10 +48,10 @@ async function setup() {
   const postJson = (path: string, method: string, body: unknown) =>
     app.request(path, { method, headers: { 'content-type': 'application/json' }, body: JSON.stringify(body) });
 
-  return { app, asUser, postJson };
+  return { app, asUser, postJson, agentStore };
 }
 
-describe('schedule RBAC — creator-only access', () => {
+describe('schedule RBAC — creator-scoped, admin sees all', () => {
   it("hides another user's schedule from get, update, delete, and list", async () => {
     const { app, asUser, postJson } = await setup();
 
@@ -86,5 +87,47 @@ describe('schedule RBAC — creator-only access', () => {
     const { app, asUser } = await setup();
     asUser(BOB);
     expect((await app.request('/01jqzz000000000000000nope')).status).toBe(404);
+  });
+
+  it('lets an admin see and manage any user\'s schedule', async () => {
+    const { app, asUser, postJson } = await setup();
+
+    asUser(ALICE);
+    const created = await postJson('/', 'POST', scheduleBody);
+    const { id } = (await created.json()).data as { id: string };
+
+    asUser(ADMIN);
+    expect((await app.request(`/${id}`)).status).toBe(200);
+
+    const adminList = await app.request('/');
+    expect(ListSchedulesResponseSchema.parse(await adminList.json()).data).toHaveLength(1);
+
+    const renamed = await postJson(`/${id}`, 'PUT', { name: 'admin-renamed', manifest: scheduleBody.manifest });
+    expect(renamed.status).toBe(200);
+    expect((await app.request(`/${id}`, { method: 'DELETE' })).status).toBe(200);
+  });
+
+  it('shows an admin schedules across multiple creators in list', async () => {
+    const { app, asUser, agentStore, postJson } = await setup();
+    // A second agent so both schedules can share the same name without colliding.
+    await agentStore.createAgent({
+      tenant_id: TENANT_ID,
+      name: 'reporter-two',
+      manifest: AgentSpecSchema.parse({ model: { name: 'test-provider/test-model' }, instructions: 'test' }),
+    });
+
+    asUser(ALICE);
+    await postJson('/', 'POST', scheduleBody);
+    asUser(BOB);
+    await postJson('/', 'POST', { ...scheduleBody, agent_name: 'reporter-two' });
+
+    asUser(ADMIN);
+    const adminList = await app.request('/');
+    expect(ListSchedulesResponseSchema.parse(await adminList.json()).data).toHaveLength(2);
+
+    // A regular user still sees only their own.
+    asUser(BOB);
+    const bobList = await app.request('/');
+    expect(ListSchedulesResponseSchema.parse(await bobList.json()).data).toHaveLength(1);
   });
 });

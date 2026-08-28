@@ -89,6 +89,7 @@ export interface ListSchedulesInput {
   tenant_id: string;
   /** When set, only schedules bound to this agent name are returned. */
   agent_name?: string | undefined;
+  created_by?: string | undefined;
 }
 
 export interface GetScheduleInput {
