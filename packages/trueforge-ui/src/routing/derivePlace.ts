@@ -22,6 +22,9 @@ export function deriveChatPlace(snapshot: ShellSnapshot): RoutePlace {
 /** Full place including overlay routes, which win over the chat place. */
 export function derivePlace(snapshot: ShellSnapshot): RoutePlace {
   if (snapshot.settingsOpen) return { type: 'settings' };
+  if (snapshot.libraryOpen && snapshot.libraryAgentId != null) {
+    return { type: 'libraryAgent', agentId: snapshot.libraryAgentId };
+  }
   if (snapshot.libraryOpen) return { type: 'library' };
   return deriveChatPlace(snapshot);
 }

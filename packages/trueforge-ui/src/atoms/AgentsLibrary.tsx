@@ -3,8 +3,10 @@
 import { useCallback, useEffect, useState } from 'react';
 
 import { Icon } from '../icons/Icon.js';
+import { useOptionalAgentSessionsServer } from '../server/ServerContext.js';
 import { libraryAgentId, useShellMode } from '../server/ShellModeContext.js';
 import type { AgentLibraryEntry, AgentSpec } from '../server/types.js';
+import { useSlot } from '../theme/SlotsProvider.js';
 import { auiButtonClass } from './lib/buttonClasses.js';
 import { cn } from './lib/cn.js';
 import { useSearchAgentsList } from './lib/useSearchAgentsList.js';
@@ -16,9 +18,10 @@ export type AgentsLibraryProps = {
   onSelectAgent?: (agentName: string) => void;
 };
 
-type AgentLibraryRowProps = {
+export type AgentLibraryRowProps = {
   agent: AgentLibraryEntry;
   showEdit: boolean;
+  onOpen?: () => void;
   onTry: () => void;
   onEdit: () => void;
 };
@@ -29,7 +32,7 @@ function displayModelLabel(modelName: string): string {
   return slash >= 0 ? modelName.slice(slash + 1) : modelName;
 }
 
-function AgentLibraryRow({ agent, showEdit, onTry, onEdit }: AgentLibraryRowProps) {
+export function AgentLibraryRow({ agent, showEdit, onOpen, onTry, onEdit }: AgentLibraryRowProps) {
   const spec = agent.agentSpec;
   const modelName = spec?.model.name;
   const skillsCount = spec?.skills?.length ?? 0;
@@ -42,11 +45,23 @@ function AgentLibraryRow({ agent, showEdit, onTry, onEdit }: AgentLibraryRowProp
   return (
     <div
       role="menuitem"
+      tabIndex={onOpen == null ? undefined : 0}
+      aria-label={onOpen == null ? undefined : `Open ${agent.name}`}
       className={cn(
         'flex w-full items-center gap-2.5 rounded-md border border-transparent px-2.5 py-2 transition-colors',
         'hover:border-border hover:bg-ghost-button-hover',
         'focus-within:border-border focus-within:bg-ghost-button-hover',
+        onOpen != null &&
+          'cursor-pointer focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-focus-ring',
       )}
+      onClick={onOpen}
+      onKeyDown={event => {
+        if (onOpen == null || event.target !== event.currentTarget || (event.key !== 'Enter' && event.key !== ' ')) {
+          return;
+        }
+        event.preventDefault();
+        onOpen();
+      }}
     >
       <span className="bg-primary-bg text-text-secondary inline-flex size-8 shrink-0 items-center justify-center rounded-md border border-border">
         <Icon name="robot" className="size-4" />
@@ -85,7 +100,10 @@ function AgentLibraryRow({ agent, showEdit, onTry, onEdit }: AgentLibraryRowProp
               variant: 'ghost',
               size: 'sm',
             })}
-            onClick={onEdit}
+            onClick={event => {
+              event.stopPropagation();
+              onEdit();
+            }}
           >
             <Icon name="pencil" className="size-3.5" />
             Edit
@@ -98,7 +116,10 @@ function AgentLibraryRow({ agent, showEdit, onTry, onEdit }: AgentLibraryRowProp
             variant: 'outline',
             size: 'sm',
           })}
-          onClick={onTry}
+          onClick={event => {
+            event.stopPropagation();
+            onTry();
+          }}
         >
           <Icon name="play" className="size-3.5" />
           Try
@@ -110,6 +131,8 @@ function AgentLibraryRow({ agent, showEdit, onTry, onEdit }: AgentLibraryRowProp
 
 export function AgentsLibrary({ onSelectAgent }: AgentsLibraryProps) {
   const shell = useShellMode();
+  const sessionsServer = useOptionalAgentSessionsServer();
+  const SlottedAgentLibraryRow = useSlot('AgentLibraryRow');
   const [query, setQuery] = useState('');
   const open = shell.libraryOpen;
 
@@ -214,12 +237,16 @@ export function AgentsLibrary({ onSelectAgent }: AgentsLibraryProps) {
             <>
               {agents.map(agent => {
                 const agentSpec = agent.agentSpec;
+                const agentId = agent.agentId;
                 const showEdit = canEdit && agentSpec != null;
                 return (
-                  <AgentLibraryRow
+                  <SlottedAgentLibraryRow
                     key={libraryAgentId(agent)}
                     agent={agent}
                     showEdit={showEdit}
+                    {...(sessionsServer != null && agentId != null
+                      ? { onOpen: () => shell.openLibraryAgent(agentId) }
+                      : {})}
                     onTry={() => handleTry(agent)}
                     onEdit={() => {
                       if (agentSpec != null) handleEdit(agent, agentSpec);
@@ -247,5 +274,6 @@ export function AgentsLibrary({ onSelectAgent }: AgentsLibraryProps) {
 declare module '../theme/SlotsProvider.js' {
   interface AtomSlots {
     AgentsLibrary: typeof AgentsLibrary;
+    AgentLibraryRow: typeof AgentLibraryRow;
   }
 }

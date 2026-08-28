@@ -3,7 +3,6 @@
 import { lazy, Suspense, useEffect, useRef, useState } from 'react';
 
 import { useAui } from '../assistant-ui.js';
-import { AgentsLibrary } from '../atoms/AgentsLibrary.js';
 import { auiButtonClass } from '../atoms/lib/buttonClasses.js';
 import { cn } from '../atoms/lib/cn.js';
 import { NamedAgentHeaderLabel } from '../atoms/NamedAgentHeaderLabel.js';
@@ -32,6 +31,8 @@ export function SidebarLayout({ className }: { className?: string }) {
   const brandName = useBrandName();
   const chrome = resolveBrandChrome(brand);
   const BrandLogo = useSlot('BrandLogo');
+  const AgentDetailsPage = useSlot('AgentDetailsPage');
+  const AgentsLibrary = useSlot('AgentsLibrary');
   const AgentsLibraryButton = useSlot('AgentsLibraryButton');
   const ClearChatButton = useSlot('ClearChatButton');
   const SaveAgentButton = useSlot('SaveAgentButton');
@@ -203,6 +204,8 @@ export function SidebarLayout({ className }: { className?: string }) {
             >
               <TruefoundrySettingsBuilder />
             </Suspense>
+          ) : libraryOpen && shell?.libraryAgentId != null ? (
+            <AgentDetailsPage key={shell.libraryAgentId} agentId={shell.libraryAgentId} />
           ) : libraryOpen ? (
             <AgentsLibrary onSelectAgent={() => setMobileNavOpen(false)} />
           ) : isIdle ? (

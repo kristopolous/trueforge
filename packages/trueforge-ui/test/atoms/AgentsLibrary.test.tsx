@@ -65,6 +65,7 @@ function LibraryHarness({ children, onSelectAgent }: { children?: ReactNode; onS
       <button type="button" onClick={() => shell.setLibraryOpen(true)}>
         Open library
       </button>
+      <output data-testid="library-agent-id">{shell.libraryAgentId ?? ''}</output>
       <AgentsLibrary onSelectAgent={onSelectAgent} />
       {children}
     </>
@@ -103,6 +104,21 @@ describe('CenteredModal', () => {
 });
 
 describe('AgentsLibrary', () => {
+  it('opens agent details from the row only when the optional server is available', async () => {
+    const server = createMockAgentUIServer({
+      searchAgents: vi.fn(async () => [{ name: 'alpha-agent', agentId: 'agent-1' }]),
+      sessions: {
+        getAgent: vi.fn(),
+        getCodeSnippets: vi.fn(),
+      },
+    });
+    renderLibrary(<LibraryHarness />, { server });
+    fireEvent.click(screen.getByRole('button', { name: 'Open library' }));
+
+    fireEvent.click(await screen.findByRole('menuitem', { name: 'Open alpha-agent' }));
+    expect(screen.getByTestId('library-agent-id')).toHaveTextContent('agent-1');
+  });
+
   it('lists agents and selects a named agent (Try = immutable)', async () => {
     const server = mockServer([
       { name: 'alpha-agent', agentId: 'alpha-agent' },

@@ -3,7 +3,6 @@
 import { lazy, Suspense, useEffect, useState, type ReactNode } from 'react';
 
 import { useAui } from '../assistant-ui.js';
-import { AgentsLibrary } from '../atoms/AgentsLibrary.js';
 import { NamedAgentHeaderLabel } from '../atoms/NamedAgentHeaderLabel.js';
 import { ShellActions } from '../atoms/ShellActions.js';
 import { auiButtonClass } from '../atoms/lib/buttonClasses.js';
@@ -32,6 +31,8 @@ export function StackChatPanel({ className, threadHeaderEnd }: StackChatPanelPro
   const aui = useAui();
   const shell = useOptionalShellMode();
   const ClearChatButton = useSlot('ClearChatButton');
+  const AgentDetailsPage = useSlot('AgentDetailsPage');
+  const AgentsLibrary = useSlot('AgentsLibrary');
   const SaveAgentButton = useSlot('SaveAgentButton');
   const SelectAgentEmptyState = useSlot('SelectAgentEmptyState');
   const isIdle = shell?.mode.status === 'idle';
@@ -62,6 +63,10 @@ export function StackChatPanel({ className, threadHeaderEnd }: StackChatPanelPro
           >
             <TruefoundrySettingsBuilder />
           </Suspense>
+        </div>
+      ) : libraryOpen && shell?.libraryAgentId != null ? (
+        <div className="min-h-0 flex-1">
+          <AgentDetailsPage key={shell.libraryAgentId} agentId={shell.libraryAgentId} />
         </div>
       ) : libraryOpen ? (
         <div className="min-h-0 flex-1">

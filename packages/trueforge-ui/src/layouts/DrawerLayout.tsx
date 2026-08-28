@@ -3,7 +3,6 @@
 import { lazy, Suspense, useEffect, useRef, useState } from 'react';
 
 import { useAui } from '../assistant-ui.js';
-import { AgentsLibrary } from '../atoms/AgentsLibrary.js';
 import { NamedAgentHeaderLabel } from '../atoms/NamedAgentHeaderLabel.js';
 import { ShellActions } from '../atoms/ShellActions.js';
 import { auiButtonClass } from '../atoms/lib/buttonClasses.js';
@@ -21,6 +20,8 @@ export function DrawerLayout({ className }: { className?: string }) {
   const aui = useAui();
   const shell = useOptionalShellMode();
   const ClearChatButton = useSlot('ClearChatButton');
+  const AgentDetailsPage = useSlot('AgentDetailsPage');
+  const AgentsLibrary = useSlot('AgentsLibrary');
   const SaveAgentButton = useSlot('SaveAgentButton');
   const SelectAgentEmptyState = useSlot('SelectAgentEmptyState');
   const [threadsOpen, setThreadsOpen] = useState(false);
@@ -125,6 +126,8 @@ export function DrawerLayout({ className }: { className?: string }) {
           >
             <TruefoundrySettingsBuilder />
           </Suspense>
+        ) : libraryOpen && shell?.libraryAgentId != null ? (
+          <AgentDetailsPage key={shell.libraryAgentId} agentId={shell.libraryAgentId} />
         ) : libraryOpen ? (
           <AgentsLibrary onSelectAgent={() => setThreadsOpen(false)} />
         ) : isIdle ? (

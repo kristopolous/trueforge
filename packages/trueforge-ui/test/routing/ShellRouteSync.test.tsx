@@ -93,6 +93,15 @@ describe('ShellRouteSync', () => {
     expect(pathname).toBe('/');
   });
 
+  it('mirrors library agent detail through history', () => {
+    renderSync({ initialEntries: ['/'], agentConfig: { mode: 'AgentLibraryWithComposer' } });
+    act(() => shell.openLibraryAgent('agent/id'));
+    expect(pathname).toBe('/library/agent%2Fid');
+    expect(shell.libraryAgentId).toBe('agent/id');
+    act(() => shell.closeLibraryAgent());
+    expect(pathname).toBe('/library');
+  });
+
   it('closes the library when selecting a session from the overlay', () => {
     renderSync({ initialEntries: ['/library'], agentConfig: { mode: 'AgentLibraryWithComposer' } });
     expect(shell.libraryOpen).toBe(true);
@@ -137,6 +146,13 @@ describe('ShellRouteSync', () => {
     renderSync({ initialEntries: ['/library'], agentConfig: { mode: 'AgentLibraryWithComposer' } });
     expect(shell.libraryOpen).toBe(true);
     expect(pathname).toBe('/library');
+  });
+
+  it('opens agent details on boot from a /library/:agentId deep link', () => {
+    renderSync({ initialEntries: ['/library/agent-7'], agentConfig: { mode: 'AgentLibraryWithComposer' } });
+    expect(shell.libraryOpen).toBe(true);
+    expect(shell.libraryAgentId).toBe('agent-7');
+    expect(pathname).toBe('/library/agent-7');
   });
 
   it('returns to the chat place when a /library deep link is closed', () => {

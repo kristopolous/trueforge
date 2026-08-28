@@ -30,6 +30,7 @@ export function ShellRouteSync({
   const snapshot: ShellSnapshot = {
     settingsOpen: shell.settingsOpen,
     libraryOpen: shell.libraryOpen,
+    libraryAgentId: shell.libraryAgentId,
     pendingSessionId: shell.pendingSessionId,
     activeRemoteId,
     mode: shell.mode,
@@ -91,6 +92,9 @@ export function ShellRouteSync({
         case 'library':
           shell.setLibraryOpen(true);
           return;
+        case 'libraryAgent':
+          shell.openLibraryAgent(target.agentId);
+          return;
         case 'session':
           shell.setLibraryOpen(false);
           if (shell.pendingSessionId === target.sessionId || activeRemoteId === target.sessionId) return;
@@ -133,6 +137,8 @@ export function ShellRouteSync({
       shell.setSettingsOpen(true);
     } else if (urlPlace.type === 'library') {
       shell.setLibraryOpen(true);
+    } else if (urlPlace.type === 'libraryAgent') {
+      shell.openLibraryAgent(urlPlace.agentId);
     } else {
       const chatPlace = deriveChatPlace(snapshot);
       if (!placesEqual(chatPlace, urlPlace)) applyPlace(urlPlace);
@@ -200,7 +206,7 @@ export function ShellRouteSync({
       // Leaving settings via Back to a chat place.
       shell.setSettingsOpen(false);
     }
-    if (urlPlace.type !== 'library' && shell.libraryOpen) {
+    if (urlPlace.type !== 'library' && urlPlace.type !== 'libraryAgent' && shell.libraryOpen) {
       shell.setLibraryOpen(false);
     }
     applyPlace(urlPlace);
