@@ -13,6 +13,7 @@
  *
  * Implementations: PostgresScheduleStore and SqliteScheduleStore.
  */
+import { ulid } from 'ulid';
 import { ScheduleManifestSchema, type ScheduleManifest, type ScheduleStatus } from '../schemas/schedule';
 
 /**
@@ -30,6 +31,15 @@ export type ScheduleRunStatus = 'scheduled' | 'triggered' | 'failed';
  */
 export function cronRunName(scheduledFor: Date): string {
   return `sched-${String(Math.floor(scheduledFor.getTime() / 1000))}`;
+}
+
+/**
+ * `manual-<token>` for a run-now trigger. Unlike {@link cronRunName} it carries no
+ * trigger instant — a manual run has no cron slot to be idempotent against — so the
+ * token is a fresh ulid, letting two manual triggers of the same schedule coexist.
+ */
+export function manualRunName(): string {
+  return `manual-${ulid().toLowerCase()}`;
 }
 
 export interface ScheduleRecord {
@@ -92,6 +102,12 @@ export interface ListSchedulesInput {
   created_by?: string | undefined;
 }
 
+/** User-facing run listing, scoped to one schedule. */
+export interface ListRunsInput {
+  tenant_id: string;
+  schedule_id: string;
+}
+
 export interface GetScheduleInput {
   tenant_id: string;
   id: string;
@@ -133,6 +149,7 @@ export interface CreateScheduleRunInput {
   scheduled_for: Date;
   triggered_by: string;
   status: ScheduleRunStatus;
+  triggered_at?: Date | null;
 }
 
 export interface ListScheduledRunsInput {
@@ -241,4 +258,8 @@ export interface IScheduleStore<TTransaction = never> {
    * Triggered / terminal rows are never returned.
    */
   listScheduledRuns(input: ListScheduledRunsInput, transaction?: TTransaction): Promise<ScheduleRunRecord[]>;
+  /**
+   * Runs of one schedule (any status), newest `scheduled_for` first.
+   */
+  listRuns(input: ListRunsInput, transaction?: TTransaction): Promise<ScheduleRunRecord[]>;
 }

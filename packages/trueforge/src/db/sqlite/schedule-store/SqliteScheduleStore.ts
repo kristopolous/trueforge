@@ -15,6 +15,7 @@ import {
   type GetScheduledRunForInput,
   type GetScheduleInput,
   type IScheduleStore,
+  type ListRunsInput,
   type ListScheduledRunsInput,
   type ListSchedulesInput,
   type ScheduleRecord,
@@ -254,6 +255,19 @@ export class SqliteScheduleStore implements IScheduleStore<Transaction<Database>
     return rows.map(toScheduleRecord);
   }
 
+  async listRuns(input: ListRunsInput, transaction?: Transaction<Database>): Promise<ScheduleRunRecord[]> {
+    const db = transaction ?? this.#db;
+    const rows = await db
+      .selectFrom('schedule_run')
+      .select(RUN_COLUMNS)
+      .where('tenant_id', '=', input.tenant_id)
+      .where('schedule_id', '=', input.schedule_id)
+      .orderBy('scheduled_for', 'desc')
+      .orderBy('id')
+      .execute();
+    return rows.map(toRunRecord);
+  }
+
   async getRun(input: GetRunInput, transaction?: Transaction<Database>): Promise<ScheduleRunRecord | undefined> {
     const db = transaction ?? this.#db;
     const row = await db
@@ -294,7 +308,7 @@ export class SqliteScheduleStore implements IScheduleStore<Transaction<Database>
           scheduled_for: input.scheduled_for.toISOString(),
           status: input.status,
           triggered_by: input.triggered_by,
-          triggered_at: null,
+          triggered_at: input.triggered_at?.toISOString() ?? null,
           created_at: timestamp,
           updated_at: timestamp,
         })

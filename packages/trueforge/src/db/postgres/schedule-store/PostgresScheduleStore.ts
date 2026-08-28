@@ -14,6 +14,7 @@ import {
   type GetScheduledRunForInput,
   type GetScheduleInput,
   type IScheduleStore,
+  type ListRunsInput,
   type ListScheduledRunsInput,
   type ListSchedulesInput,
   type ScheduleRecord,
@@ -210,6 +211,19 @@ export class PostgresScheduleStore implements IScheduleStore<Transaction<Databas
     return rows.map(toScheduleRecord);
   }
 
+  async listRuns(input: ListRunsInput, transaction?: Transaction<Database>): Promise<ScheduleRunRecord[]> {
+    const db = transaction ?? this.#db;
+    const rows = await db
+      .selectFrom('schedule_run')
+      .selectAll()
+      .where('tenant_id', '=', input.tenant_id)
+      .where('schedule_id', '=', input.schedule_id)
+      .orderBy('scheduled_for', 'desc')
+      .orderBy('id')
+      .execute();
+    return rows.map(toRunRecord);
+  }
+
   async getRun(input: GetRunInput, transaction?: Transaction<Database>): Promise<ScheduleRunRecord | undefined> {
     const db = transaction ?? this.#db;
     const row = await db
@@ -249,7 +263,7 @@ export class PostgresScheduleStore implements IScheduleStore<Transaction<Databas
           scheduled_for: input.scheduled_for,
           status: input.status,
           triggered_by: input.triggered_by,
-          triggered_at: null,
+          triggered_at: input.triggered_at ?? null,
           created_at: now(),
           updated_at: now(),
         })

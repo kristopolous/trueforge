@@ -9,7 +9,9 @@ import {
   CreateScheduleRequestSchema,
   DeleteScheduleResponseSchema,
   GetScheduleResponseSchema,
+  ListScheduleRunsResponseSchema,
   ListSchedulesResponseSchema,
+  ScheduleRunResponseSchema,
   UpdateScheduleRequestSchema,
 } from '../schemas/schedule';
 import { OpenApiTag } from './openapiTags';
@@ -43,6 +45,62 @@ export const listSchedulesRoute = createRoute({
     401: {
       content: { 'application/json': { schema: RequestErrorResponseSchema } },
       description: 'Unauthenticated.',
+    },
+  },
+});
+
+export const listScheduleRunsRoute = createRoute({
+  method: 'get',
+  path: '/{schedule_id}/runs',
+  tags: [OpenApiTag.SCHEDULES],
+  summary: 'List runs of a schedule',
+  description:
+    'List runs of a schedule, newest `scheduled_for` first. Only the schedule creator (or an admin) may list its runs.',
+  'x-fern-sdk-group-name': ['schedules'],
+  'x-fern-sdk-method-name': 'list_runs',
+  request: {
+    params: ScheduleIdParamsSchema,
+  },
+  responses: {
+    200: {
+      content: { 'application/json': { schema: ListScheduleRunsResponseSchema } },
+      description: 'Runs of the schedule.',
+    },
+    403: {
+      content: { 'application/json': { schema: RequestErrorResponseSchema } },
+      description: 'The caller is not the schedule creator.',
+    },
+    404: {
+      content: { 'application/json': { schema: RequestErrorResponseSchema } },
+      description: 'Not found.',
+    },
+  },
+});
+
+export const triggerScheduleRunRoute = createRoute({
+  method: 'post',
+  path: '/{schedule_id}/runs',
+  tags: [OpenApiTag.SCHEDULES],
+  summary: 'Trigger a run now',
+  description:
+    'Trigger a run of the schedule immediately, independent of its cron and status.',
+  'x-fern-sdk-group-name': ['schedules'],
+  'x-fern-sdk-method-name': 'trigger_run',
+  request: {
+    params: ScheduleIdParamsSchema,
+  },
+  responses: {
+    201: {
+      content: { 'application/json': { schema: ScheduleRunResponseSchema } },
+      description: 'The triggered run.',
+    },
+    403: {
+      content: { 'application/json': { schema: RequestErrorResponseSchema } },
+      description: 'The caller is not the schedule creator.',
+    },
+    404: {
+      content: { 'application/json': { schema: RequestErrorResponseSchema } },
+      description: 'Not found.',
     },
   },
 });

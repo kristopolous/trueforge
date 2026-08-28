@@ -527,6 +527,63 @@ export function runScheduleStoreContractSuite(deps: {
     expect(indexNewer).toBeLessThan(indexOlder);
   });
 
+  it('listRuns returns newest scheduled_for first and filters by schedule_id', async () => {
+    const store = deps.getScheduleStore();
+    const agentA = await seedAgent();
+    const agentB = await seedAgent();
+    const olderSlot = new Date('2026-08-27T10:00:00.000Z');
+    const newerSlot = new Date('2026-08-27T12:00:00.000Z');
+
+    const { schedule: scheduleA } = await store.createScheduleAndRun({
+      tenant_id: TENANT,
+      agent_name: agentA.name,
+      name: 'runs-a',
+      manifest: manifest({ status: 'paused' }),
+      created_by: USER,
+      runFrom: new Date(),
+    });
+    const older = await store.createRun({
+      tenant_id: TENANT,
+      schedule_id: scheduleA.id,
+      name: cronRunName(olderSlot),
+      scheduled_for: olderSlot,
+      status: 'triggered',
+      triggered_by: USER,
+    });
+    const newer = await store.createRun({
+      tenant_id: TENANT,
+      schedule_id: scheduleA.id,
+      name: cronRunName(newerSlot),
+      scheduled_for: newerSlot,
+      status: 'scheduled',
+      triggered_by: USER,
+    });
+
+    const { schedule: scheduleB } = await store.createScheduleAndRun({
+      tenant_id: TENANT,
+      agent_name: agentB.name,
+      name: 'runs-b',
+      manifest: manifest({ status: 'paused' }),
+      created_by: USER,
+      runFrom: new Date(),
+    });
+    const otherScheduleRun = await store.createRun({
+      tenant_id: TENANT,
+      schedule_id: scheduleB.id,
+      name: cronRunName(newerSlot),
+      scheduled_for: newerSlot,
+      status: 'scheduled',
+      triggered_by: USER,
+    });
+
+    const forA = await store.listRuns({ tenant_id: TENANT, schedule_id: scheduleA.id });
+    expect(forA.map(row => row.id)).toEqual([newer.id, older.id]);
+    expect(forA.every(row => row.schedule_id === scheduleA.id)).toBe(true);
+
+    const forB = await store.listRuns({ tenant_id: TENANT, schedule_id: scheduleB.id });
+    expect(forB.map(row => row.id)).toEqual([otherScheduleRun.id]);
+  });
+
   it('updateRunStatus stamps triggered_at only for triggered; returns undefined when gone', async () => {
     const store = deps.getScheduleStore();
     const agent = await seedAgent();

@@ -6,18 +6,22 @@ import type { Context } from 'hono';
 import type { UserContext } from '../auth/identity';
 import type { IAgentStore } from '../db/agentStore';
 import {
+  manualRunName,
   ScheduleNameConflictError,
   ScheduleRunConflictError,
   type IScheduleStore,
   type ScheduleRecord,
+  type ScheduleRunRecord,
 } from '../db/scheduleStore';
 import type { WithTransaction } from '../db/transaction';
 import {
   createScheduleRoute,
   deleteScheduleRoute,
   getScheduleRoute,
+  listScheduleRunsRoute,
   listSchedulesRoute,
   putScheduleRoute,
+  triggerScheduleRunRoute,
 } from '../routes/scheduleRoutes';
 import { minIntervalSeconds, nextTriggerAfter } from '../runtime/cron';
 import {
@@ -25,6 +29,7 @@ import {
   SCHEDULE_MIN_INTERVAL_SECONDS,
   type Schedule,
   type ScheduleManifest,
+  type ScheduleRun,
 } from '../schemas/schedule';
 import { TENANT_ID } from './sessions';
 
@@ -42,6 +47,20 @@ function toWireSchedule(record: ScheduleRecord): Schedule {
     name: record.name,
     manifest: record.manifest,
     created_by: record.created_by,
+    created_at: record.created_at,
+    updated_at: record.updated_at,
+  };
+}
+
+function toWireScheduleRun(record: ScheduleRunRecord): ScheduleRun {
+  return {
+    id: record.id,
+    schedule_id: record.schedule_id,
+    name: record.name,
+    scheduled_for: record.scheduled_for,
+    status: record.status,
+    triggered_by: record.triggered_by,
+    triggered_at: record.triggered_at,
     created_at: record.created_at,
     updated_at: record.updated_at,
   };
@@ -102,6 +121,19 @@ export function createSchedulesRouter<TTransaction>(deps: SchedulesRouterDeps<TT
       created_by: user.role === 'admin' ? undefined : user.userRef,
     });
     return c.json({ data: records.map(toWireSchedule) }, 200);
+  };
+
+  const listRunsHandler: RouteHandler<typeof listScheduleRunsRoute> = async c => {
+    const { schedule_id: scheduleId } = c.req.valid('param');
+    const schedule = await deps.scheduleStore.getSchedule({ tenant_id: TENANT_ID, id: scheduleId, forUpdate: false });
+    if (schedule === undefined) {
+      return c.json({ error: { message: `Schedule not found: ${scheduleId}` } }, 404);
+    }
+    if (!canAccessSchedule(deps.resolveUserContext(c), schedule.created_by)) {
+      return c.json({ error: { message: FORBIDDEN_SCHEDULE_ACCESS } }, 403);
+    }
+    const records = await deps.scheduleStore.listRuns({ tenant_id: TENANT_ID, schedule_id: scheduleId });
+    return c.json({ data: records.map(toWireScheduleRun) }, 200);
   };
 
   const createHandler: RouteHandler<typeof createScheduleRoute> = async c => {
@@ -226,6 +258,7 @@ export function createSchedulesRouter<TTransaction>(deps: SchedulesRouterDeps<TT
 
   const router = new OpenAPIHono();
   router.openapi(listSchedulesRoute, listHandler);
+  router.openapi(listScheduleRunsRoute, listRunsHandler);
   router.openapi(createScheduleRoute, createHandler);
   router.openapi(getScheduleRoute, getHandler);
   router.openapi(putScheduleRoute, putHandler);

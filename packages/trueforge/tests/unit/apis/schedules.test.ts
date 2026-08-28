@@ -7,7 +7,7 @@ import { migrateSqliteToLatest } from '../../../src/db/migrateSqlite';
 import { SqliteAgentStore } from '../../../src/db/sqlite/agent-store/SqliteAgentStore';
 import { createSqliteDb } from '../../../src/db/sqlite/client';
 import { SqliteScheduleStore } from '../../../src/db/sqlite/schedule-store/SqliteScheduleStore';
-import { ListSchedulesResponseSchema } from '../../../src/schemas/schedule';
+import { ListScheduleRunsResponseSchema, ListSchedulesResponseSchema } from '../../../src/schemas/schedule';
 
 const ALICE: UserContext = { userRef: 'alice', role: 'user' };
 const BOB: UserContext = { userRef: 'bob', role: 'user' };
@@ -58,7 +58,7 @@ describe('schedule RBAC — creator-scoped, admin sees all', () => {
     asUser(ALICE);
     const created = await postJson('/', 'POST', scheduleBody);
     expect(created.status).toBe(201);
-    const { id } = (await created.json()).data as { id: string };
+    const { id } = ((await created.json()) as { data: { id: string } }).data;
 
     asUser(BOB);
     expect((await app.request(`/${id}`)).status).toBe(403);
@@ -68,6 +68,8 @@ describe('schedule RBAC — creator-scoped, admin sees all', () => {
     const bobList = await app.request('/');
     expect(bobList.status).toBe(200);
     expect(ListSchedulesResponseSchema.parse(await bobList.json()).data).toEqual([]);
+
+    expect((await app.request(`/${id}/runs`)).status).toBe(403);
   });
 
   it('lets the creator see and manage their own schedule', async () => {
@@ -75,11 +77,16 @@ describe('schedule RBAC — creator-scoped, admin sees all', () => {
 
     asUser(ALICE);
     const created = await postJson('/', 'POST', scheduleBody);
-    const { id } = (await created.json()).data as { id: string };
+    const { id } = ((await created.json()) as { data: { id: string } }).data;
 
     expect((await app.request(`/${id}`)).status).toBe(200);
     const aliceList = await app.request('/');
     expect(ListSchedulesResponseSchema.parse(await aliceList.json()).data).toHaveLength(1);
+    const aliceRuns = await app.request(`/${id}/runs`);
+    expect(aliceRuns.status).toBe(200);
+    expect(ListScheduleRunsResponseSchema.parse(await aliceRuns.json()).data).toEqual([
+      expect.objectContaining({ schedule_id: id }),
+    ]);
     expect((await app.request(`/${id}`, { method: 'DELETE' })).status).toBe(200);
   });
 
@@ -87,6 +94,7 @@ describe('schedule RBAC — creator-scoped, admin sees all', () => {
     const { app, asUser } = await setup();
     asUser(BOB);
     expect((await app.request('/01jqzz000000000000000nope')).status).toBe(404);
+    expect((await app.request('/01jqzz000000000000000nope/runs')).status).toBe(404);
   });
 
   it('lets an admin see and manage any user\'s schedule', async () => {
@@ -94,13 +102,15 @@ describe('schedule RBAC — creator-scoped, admin sees all', () => {
 
     asUser(ALICE);
     const created = await postJson('/', 'POST', scheduleBody);
-    const { id } = (await created.json()).data as { id: string };
+    const { id } = ((await created.json()) as { data: { id: string } }).data;
 
     asUser(ADMIN);
     expect((await app.request(`/${id}`)).status).toBe(200);
 
     const adminList = await app.request('/');
     expect(ListSchedulesResponseSchema.parse(await adminList.json()).data).toHaveLength(1);
+    const adminRuns = await app.request(`/${id}/runs`);
+    expect(ListScheduleRunsResponseSchema.parse(await adminRuns.json()).data).toHaveLength(1);
 
     const renamed = await postJson(`/${id}`, 'PUT', { name: 'admin-renamed', manifest: scheduleBody.manifest });
     expect(renamed.status).toBe(200);
@@ -117,17 +127,27 @@ describe('schedule RBAC — creator-scoped, admin sees all', () => {
     });
 
     asUser(ALICE);
-    await postJson('/', 'POST', scheduleBody);
+    const aliceCreated = await postJson('/', 'POST', scheduleBody);
+    const aliceId = ((await aliceCreated.json()) as { data: { id: string } }).data.id;
     asUser(BOB);
-    await postJson('/', 'POST', { ...scheduleBody, agent_name: 'reporter-two' });
+    const bobCreated = await postJson('/', 'POST', { ...scheduleBody, agent_name: 'reporter-two' });
+    const bobId = ((await bobCreated.json()) as { data: { id: string } }).data.id;
 
     asUser(ADMIN);
     const adminList = await app.request('/');
     expect(ListSchedulesResponseSchema.parse(await adminList.json()).data).toHaveLength(2);
+    // An admin reaches the runs of a schedule created by anyone.
+    expect(ListScheduleRunsResponseSchema.parse(await (await app.request(`/${bobId}/runs`)).json()).data).toEqual([
+      expect.objectContaining({ schedule_id: bobId }),
+    ]);
 
     // A regular user still sees only their own.
     asUser(BOB);
     const bobList = await app.request('/');
     expect(ListSchedulesResponseSchema.parse(await bobList.json()).data).toHaveLength(1);
+    expect(ListScheduleRunsResponseSchema.parse(await (await app.request(`/${bobId}/runs`)).json()).data).toHaveLength(
+      1,
+    );
+    expect((await app.request(`/${aliceId}/runs`)).status).toBe(403);
   });
 });

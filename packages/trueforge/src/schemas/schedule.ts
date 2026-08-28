@@ -117,8 +117,32 @@ export const GetScheduleResponseSchema = z.object({ data: ScheduleSchema }).open
 export const ListSchedulesResponseSchema = z.object({ data: z.array(ScheduleSchema) }).openapi('ListSchedulesResponse');
 export const DeleteScheduleResponseSchema = z.object({}).openapi('DeleteScheduleResponse');
 
+export const ScheduleRunStatusSchema = z.enum(['scheduled', 'triggered', 'failed']).openapi('ScheduleRunStatus');
+
+export const ScheduleRunSchema = z
+  .object({
+    id: z.string(),
+    schedule_id: z.string(),
+    name: z.string(),
+    scheduled_for: IsoTimestamp,
+    status: ScheduleRunStatusSchema,
+    triggered_by: z.string(),
+    triggered_at: IsoTimestamp.nullable(),
+    created_at: IsoTimestamp,
+    updated_at: IsoTimestamp,
+  })
+  .strict()
+  .openapi('ScheduleRun');
+
+export const ListScheduleRunsResponseSchema = z
+  .object({ data: z.array(ScheduleRunSchema) })
+  .openapi('ListScheduleRunsResponse');
+
+export const ScheduleRunResponseSchema = z.object({ data: ScheduleRunSchema }).openapi('ScheduleRunResponse');
+
 export type ScheduleStatus = z.infer<typeof ScheduleStatusSchema>;
 export type ScheduleManifest = z.infer<typeof ScheduleManifestSchema>;
 export type Schedule = z.infer<typeof ScheduleSchema>;
+export type ScheduleRun = z.infer<typeof ScheduleRunSchema>;
 export type CreateScheduleRequest = z.infer<typeof CreateScheduleRequestSchema>;
 export type UpdateScheduleRequest = z.infer<typeof UpdateScheduleRequestSchema>;
