@@ -72,8 +72,8 @@ importers:
         specifier: workspace:*
         version: link:../trueforge-ui
       monaco-editor:
-        specifier: ^0.52.0
-        version: 0.52.2
+        specifier: ^0.56.0
+        version: 0.56.0
       react:
         specifier: ^19.2.4
         version: 19.2.8
@@ -110,22 +110,22 @@ importers:
         version: 2.5.3(rollup@4.62.2)
       vite-plugin-monaco-editor-esm:
         specifier: ^2.0.2
-        version: 2.0.3(monaco-editor@0.52.2)
+        version: 2.0.3(monaco-editor@0.56.0)
 
   packages/trueforge:
     dependencies:
       '@anthropic-ai/sandbox-runtime':
-        specifier: 0.0.71
-        version: 0.0.71
+        specifier: 0.0.73
+        version: 0.0.73
       '@daytona/sdk':
-        specifier: ^0.204.1
-        version: 0.204.1(debug@4.4.3(supports-color@8.1.1))(supports-color@8.1.1)
+        specifier: ^0.207.0
+        version: 0.207.0(debug@4.4.3(supports-color@8.1.1))(supports-color@8.1.1)
       '@hono/node-server':
         specifier: ^2.1.1
         version: 2.1.1(hono@4.13.5)
       '@hono/swagger-ui':
-        specifier: ^0.2.2
-        version: 0.2.2(hono@4.13.5)
+        specifier: ^0.6.1
+        version: 0.6.1(hono@4.13.5)
       '@hono/zod-openapi':
         specifier: ^1.6.1
         version: 1.6.1(hono@4.13.5)(zod@4.4.3)
@@ -233,8 +233,8 @@ importers:
         specifier: ^5.0.32
         version: 5.0.32(zod@4.4.3)
       '@daytona/sdk':
-        specifier: ^0.204.1
-        version: 0.204.1(debug@4.4.3(supports-color@8.1.1))(supports-color@8.1.1)
+        specifier: ^0.207.0
+        version: 0.207.0(debug@4.4.3(supports-color@8.1.1))(supports-color@8.1.1)
       '@hono/zod-openapi':
         specifier: ^1.6.1
         version: 1.6.1(hono@4.13.5)(zod@4.4.3)
@@ -242,8 +242,8 @@ importers:
         specifier: ^1.30.0
         version: 1.30.0(supports-color@8.1.1)(zod@4.4.3)
       '@nats-io/nats-core':
-        specifier: 3.0.2
-        version: 3.0.2
+        specifier: 3.4.0
+        version: 3.4.0
       '@opentelemetry/api':
         specifier: ^1.9.1
         version: 1.9.1
@@ -336,14 +336,14 @@ importers:
         specifier: 0.14.27
         version: 0.14.27(@types/react-dom@19.2.5(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(redis@5.12.1(@opentelemetry/api@1.9.1))(use-sync-external-store@1.6.0(react@19.2.8))
       '@openuidev/react-headless':
-        specifier: ^0.9.4
-        version: 0.9.4(react@19.2.8)(zustand@5.0.15(@types/react@19.2.18)(react@19.2.8)(use-sync-external-store@1.6.0(react@19.2.8)))
+        specifier: ^0.9.12
+        version: 0.9.12(ai@7.0.82(zod@4.4.3))(react@19.2.8)(zustand@5.0.15(@types/react@19.2.18)(react@19.2.8)(use-sync-external-store@1.6.0(react@19.2.8)))
       '@openuidev/react-lang':
-        specifier: ^0.2.9
-        version: 0.2.9(@modelcontextprotocol/sdk@1.30.0(supports-color@8.1.1)(zod@4.4.3))(react@19.2.8)(zod@4.4.3)
+        specifier: ^0.2.15
+        version: 0.2.15(@modelcontextprotocol/sdk@1.30.0(supports-color@8.1.1)(zod@4.4.3))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(zod@4.4.3)
       '@openuidev/react-ui':
-        specifier: ^0.13.2
-        version: 0.13.3(@openuidev/react-headless@0.9.4(react@19.2.8)(zustand@5.0.15(@types/react@19.2.18)(react@19.2.8)(use-sync-external-store@1.6.0(react@19.2.8))))(@openuidev/react-lang@0.2.9(@modelcontextprotocol/sdk@1.30.0(supports-color@8.1.1)(zod@4.4.3))(react@19.2.8)(zod@4.4.3))(@types/react-dom@19.2.5(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(supports-color@8.1.1)(zod@4.4.3)(zustand@5.0.15(@types/react@19.2.18)(react@19.2.8)(use-sync-external-store@1.6.0(react@19.2.8)))
+        specifier: ^0.13.9
+        version: 0.13.9(@openuidev/react-headless@0.9.12(ai@7.0.82(zod@4.4.3))(react@19.2.8)(zustand@5.0.15(@types/react@19.2.18)(react@19.2.8)(use-sync-external-store@1.6.0(react@19.2.8))))(@openuidev/react-lang@0.2.15(@modelcontextprotocol/sdk@1.30.0(supports-color@8.1.1)(zod@4.4.3))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(zod@4.4.3))(@types/react-dom@19.2.5(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(supports-color@8.1.1)(zod@4.4.3)(zustand@5.0.15(@types/react@19.2.18)(react@19.2.8)(use-sync-external-store@1.6.0(react@19.2.8)))
       '@truefoundry/assistant-ui-runtime':
         specifier: 0.1.21
         version: 0.1.21(@assistant-ui/tap@0.9.5(@types/react@19.2.18)(react@19.2.8))(@types/react@19.2.18)(assistant-cloud@0.1.41(redis@5.12.1(@opentelemetry/api@1.9.1)))(react@19.2.8)(redis@5.12.1(@opentelemetry/api@1.9.1))(truefoundry-gateway-sdk@0.4.2)(zustand@5.0.15(@types/react@19.2.18)(react@19.2.8)(use-sync-external-store@1.6.0(react@19.2.8)))
@@ -354,8 +354,8 @@ importers:
         specifier: ^2.1.1
         version: 2.1.1
       lucide-react:
-        specifier: ^0.562.0
-        version: 0.562.0(react@19.2.8)
+        specifier: ^0.577.0
+        version: 0.577.0(react@19.2.8)
       monaco-editor:
         specifier: ^0.56.0
         version: 0.56.0
@@ -520,8 +520,8 @@ packages:
     resolution: {integrity: sha512-aWO7iwhFUGf347tCwNGggggfmZigaSu7TF739IZSrWWABUp7zkb4Cr3fMqvBe5EIS7ABJJu3Cadn0g/zs1G0QQ==}
     engines: {node: '>=22'}
 
-  '@anthropic-ai/sandbox-runtime@0.0.71':
-    resolution: {integrity: sha512-/ZMCavpMElD0ku2BlA95vezKUsVN0DD/wVd3WIEAfFjkTF2nsmzQA+MhejIWhuSUS9HpxMtTj57eFL+kdbKZ/A==}
+  '@anthropic-ai/sandbox-runtime@0.0.73':
+    resolution: {integrity: sha512-F608iUirrCqwvInZYGRRgJWDQj0tt6fNVE9aPagpotLJ5LhC4JbrMFIIZww5MFjb+HRCkpE0+xdI79c30tdVYg==}
     engines: {node: '>=20.11.0'}
     hasBin: true
 
@@ -1017,17 +1017,17 @@ packages:
   '@date-fns/tz@1.5.0':
     resolution: {integrity: sha512-lwYN/vDPeNRULcepoE/LO2Pgx+7/RV+S9ARfbc9lr2DtGkOD7pAiruHvbR1RX3Qyf6ja47EWJDMsNK5vK08DJg==}
 
-  '@daytona/analytics-api-client@0.204.1':
-    resolution: {integrity: sha512-d0iZDB0b3Fx70+f9IoU1yfJNDW9xhqpld33HkvQbCMlelSA7BFSObcLJfrf24B2KzlvWu61UM9mycYRlVt5ZIw==}
+  '@daytona/analytics-api-client@0.207.0':
+    resolution: {integrity: sha512-5jQ8NVhx4aYDlMCVl+VWqGg4w2Hs+WUgDSNcbkevdcnnTU9Yk/3qHBtYRtOs46pXlIec1NsVfI9c4BGE/xFsmg==}
 
-  '@daytona/api-client@0.204.1':
-    resolution: {integrity: sha512-aRE6iduYtpStJ8nQqDid73SA4tI/yjq34s7maiVlmU7m83bIXkwMJFVana1KXwIDtPsAhSfSFHNIl666Q+ehEQ==}
+  '@daytona/api-client@0.207.0':
+    resolution: {integrity: sha512-1rJpQoKdYn4KUQTOCosw2XYPobMwbhNCbDmnyMlUvH/nJE1qoom3krJ6VW+mx5f1lwknd23vl5Shqn0IN2a+xg==}
 
-  '@daytona/sdk@0.204.1':
-    resolution: {integrity: sha512-xgNwgHF1jL+nySyfqwr8kH6j4UwgAqofK1VId2RN36SqPP+xlgSlo7v2NBB/bKw4zqt/5+Sb0uib0fyaTiExAQ==}
+  '@daytona/sdk@0.207.0':
+    resolution: {integrity: sha512-eq5VxZJ4F2WPAjP5LQN1p2hR1AzF9sICY9xedW0QFkTjtYovB4vdoN/S9i5BdHFrN111y5ZA2Z9WaPq/ykLgnQ==}
 
-  '@daytona/toolbox-api-client@0.204.1':
-    resolution: {integrity: sha512-uuUpiPWX0eaWbIFmYJZzt72xDtHEUAKRW62JxsoubUPSs/iNeCUcOA8GivSULWKLZCKZJQAvKJUl7y2B+73RTw==}
+  '@daytona/toolbox-api-client@0.207.0':
+    resolution: {integrity: sha512-3YlwbVN81KpF6CFTjno2jO45EzNQ97FF2hh+DeYzu9O9vSWRFrO16ae1XiJ5eMzFlkMvF+R4zwqnqtBenIg3HA==}
 
   '@esbuild/aix-ppc64@0.25.12':
     resolution: {integrity: sha512-Hhmwd6CInZ3dwpuGTF8fJG6yoWmsToE+vYgD4nytZVxcu1ulHpUQRAB1UJ8+N1Am3Mz4+xOByoQoSZf4D+CpkA==}
@@ -1643,10 +1643,10 @@ packages:
     peerDependencies:
       hono: ^4
 
-  '@hono/swagger-ui@0.2.2':
-    resolution: {integrity: sha512-Bco6XdKkTP7yIVWXpquLQayvjwzDmsmsESjF7VcrU/ZPTYafGvvpHf7Z6PHTWyp+JpdYORZXlyZ75T3At2KfAA==}
+  '@hono/swagger-ui@0.6.1':
+    resolution: {integrity: sha512-sJTvldu1GPeEPfyeLG7gRj+W4vEuD+JDi+JjJ3TJs/DvMUtBLs0KJO5yokGegWWdy5qrbdnQGekbhgNRmPmYKQ==}
     peerDependencies:
-      hono: '*'
+      hono: '>=4.0.0'
 
   '@hono/zod-openapi@1.6.1':
     resolution: {integrity: sha512-z1xS3FZxl4bBkU3kMIsQsLtsqxPTha5XZCsDEPMSZ6+3RRBQI7KED1GeoDpq2WueXCacsNIjcB0MtCnEHY7ahQ==}
@@ -1861,16 +1861,16 @@ packages:
     resolution: {integrity: sha512-2+BzZbjRO7Ct61k8fMNHEtoKjeWI9pIlHFTqBwZ5icHpqszIgEZbjb1MW5Z0+bITTCTl3gk4PDBxs9tA/csXvA==}
     engines: {node: '>=18'}
 
-  '@nats-io/nats-core@3.0.2':
-    resolution: {integrity: sha512-gACbRIhY3yQTO+5C4E1LY/qO2e5EhGUBeDsnPDT8Hd3qY9mfhNtluY6R7d7WX7/JMGsXRPbYdSLSADr/ECSy3w==}
+  '@nats-io/nats-core@3.4.0':
+    resolution: {integrity: sha512-QMDM86EUNm+wudlKC67HLar/KHHQUvJGLfb4jbahje3pUk3K9afeck9fwsxBZF0eUFox6T/TA6m/t+lQqf+QsQ==}
 
   '@nats-io/nkeys@2.0.3':
     resolution: {integrity: sha512-JVt56GuE6Z89KUkI4TXUbSI9fmIfAmk6PMPknijmuL72GcD+UgIomTcRWiNvvJKxA01sBbmIPStqJs5cMRBC3A==}
     engines: {node: '>=18.0.0'}
 
-  '@nats-io/nuid@2.0.3':
-    resolution: {integrity: sha512-TpA3HEBna/qMVudy+3HZr5M3mo/L1JPofpVT4t0HkFGkz2Cn9wrlrQC8tvR8Md5Oa9//GtGG26eN0qEWF5Vqew==}
-    engines: {node: '>= 18.x'}
+  '@nats-io/nuid@3.0.0':
+    resolution: {integrity: sha512-QbXZDrxmYlrn5AD06gYcUTmEHwxn96HBQMIk7XTjDlEcx6FPzVBBPjp4AMRh1lEv6B4iJ6Xb/Uz61JugPXFRQg==}
+    engines: {node: '>= 22.x'}
 
   '@nodelib/fs.scandir@2.1.5':
     resolution: {integrity: sha512-vq24Bq3ym5HEQm2NKCr3yXDwjc7vTsEThRDnkp2DK9p1uqLR+DHurm/NOTo0KG7HYHU7eppKZj3MyqYuMBf62g==}
@@ -2073,6 +2073,17 @@ packages:
     resolution: {integrity: sha512-eSYWTm620tTk45EKSedaUL8MFYI8hW164hIXsgIHyxu3VobUB3fFCu5t0hQby6OoWRPsG1KkKUG2M5UadiLiVg==}
     engines: {node: '>=14'}
 
+  '@openuidev/devtools@0.1.0':
+    resolution: {integrity: sha512-MUoeSlRPF3P8A9KKOYtIthKYs0ME9kaPNc2i2/enImhTodNdO29sDpebm4Q8MpPFLCJmM6qELQwZ6YkAWKz18A==}
+    peerDependencies:
+      '@openuidev/observability': ^0.0.4
+      '@openuidev/react-lang': ^0.2.15
+      react: ^18.3.1 || ^19.0.0
+      react-dom: ^18.0.0 || ^19.0.0
+    peerDependenciesMeta:
+      '@openuidev/react-lang':
+        optional: true
+
   '@openuidev/lang-core@0.2.16':
     resolution: {integrity: sha512-PGzzlgiMUKbF3IEAToWYx/yFkX0QVZmc3L3AEsEO89uvmbmt5quzJE26Z7BsztH1kIxiLRGcksDQJn0Ay/HHlg==}
     peerDependencies:
@@ -2082,30 +2093,37 @@ packages:
       '@modelcontextprotocol/sdk':
         optional: true
 
-  '@openuidev/observability@0.0.1':
-    resolution: {integrity: sha512-OIlRQbVqTBpre3MMzaeNB3USDaigUaSZyPcAIVSLNpqcosGgJijUS2nXjDVRRnZFsOu0gIOTVqd2G8lwcLSBPg==}
+  '@openuidev/observability@0.0.4':
+    resolution: {integrity: sha512-4fjIrWu3TqTlfDE/m7cG10CH1vV7wQk5GPwMOmXeF9vJtkg92dg4Bdk3AjKgud7H7Xypwwjgt52VcLGZCE2CJQ==}
 
-  '@openuidev/react-headless@0.9.4':
-    resolution: {integrity: sha512-GCcvSJ8ZHY2yxyp2eCyYxP4zB4CmDvyVR/04DmXyGdIZJNTYJ/HAOU0xPI3wUYXO/3JT2UduPh0V4TM/GF7rCA==}
+  '@openuidev/react-headless@0.9.12':
+    resolution: {integrity: sha512-aXAS22mVdeCfhuKuGAC76wYyV5UwNq3y+kTc1WAT62dUlzA0OZ7CUL7BIBGwBH9CgwN81uND8PjISwADKSOOZw==}
     peerDependencies:
+      ai: ^6.0.0 || ^7.0.0
       react: ^18.3.1 || ^19.0.0
       zustand: ^5.0.14
+    peerDependenciesMeta:
+      ai:
+        optional: true
 
-  '@openuidev/react-lang@0.2.9':
-    resolution: {integrity: sha512-pQd4goMYHBfq2Df1kq3MOh0QbZiBIhBkD3K/0UfTY86a/N7EC/ydo1xW1IjjOSU0qHycF5z5Yw/UGs2BDllGjA==}
+  '@openuidev/react-lang@0.2.15':
+    resolution: {integrity: sha512-Cv/Si/9RVLEuA0xN+EjfzUqDpJsRTfSX1RieDw7DzJ6LxD8LWeA6Fi/F2br8d6QZKg/h51vtJoXNSt62VF1ttA==}
     peerDependencies:
       '@modelcontextprotocol/sdk': '>=1.0.0'
-      react: ^18.3.1 || ^19.0.0
+      react: '*'
+      react-dom: '*'
       zod: ^3.25.0 || ^4.0.0
     peerDependenciesMeta:
       '@modelcontextprotocol/sdk':
         optional: true
+      react-dom:
+        optional: true
 
-  '@openuidev/react-ui@0.13.3':
-    resolution: {integrity: sha512-8BFGrBaTQravEmsUq3qfpl2j+qfAU2VV7J9FjdF0yof9t2GzquuqeAZBGcD+rH3kOafF0DKqdOL37x216hM0zg==}
+  '@openuidev/react-ui@0.13.9':
+    resolution: {integrity: sha512-yrol9+neyWIMKZ2+QGl7MZJKsPuH1CIHHI/A3M/i9AWX1DEyvpDoPL2yGePKQu72eDImhTkLgxFoO9hPdRf2bw==}
     peerDependencies:
-      '@openuidev/react-headless': ^0.9.4
-      '@openuidev/react-lang': ^0.2.9
+      '@openuidev/react-headless': ^0.9.12
+      '@openuidev/react-lang': ^0.2.14
       react: ^18.3.1 || ^19.0.0
       react-dom: ^18.0.0 || ^19.0.0
       zod: ^3.25.0 || ^4.0.0
@@ -5677,6 +5695,16 @@ packages:
     peerDependencies:
       react: ^16.5.1 || ^17.0.0 || ^18.0.0 || ^19.0.0
 
+  lucide-react@0.575.0:
+    resolution: {integrity: sha512-VuXgKZrk0uiDlWjGGXmKV6MSk9Yy4l10qgVvzGn2AWBx1Ylt0iBexKOAoA6I7JO3m+M9oeovJd3yYENfkUbOeg==}
+    peerDependencies:
+      react: ^16.5.1 || ^17.0.0 || ^18.0.0 || ^19.0.0
+
+  lucide-react@0.577.0:
+    resolution: {integrity: sha512-4LjoFv2eEPwYDPg/CUdBJQSDfPyzXCRrVW1X7jrx/trgxnxkHFjnVZINbzvzxjN70dxychOfg+FTYwBiS3pQ5A==}
+    peerDependencies:
+      react: ^16.5.1 || ^17.0.0 || ^18.0.0 || ^19.0.0
+
   luxon@3.7.2:
     resolution: {integrity: sha512-vtEhXh/gNjI9Yg1u4jX/0YVPMvxzHuGgCm6tC5kZyb08yjGWGnqAjGJvcXbqQR2P3MyMEFnRbpcdFS6PBcLqew==}
     engines: {node: '>=12'}
@@ -5958,9 +5986,6 @@ packages:
 
   module-details-from-path@1.0.4:
     resolution: {integrity: sha512-EGWKgxALGMgzvxYF1UyGTy0HXX/2vHLkw6+NvDKW2jypWbHpjQuj4UMcqQWXHERJhVGKikolT06G3bcKe4fi7w==}
-
-  monaco-editor@0.52.2:
-    resolution: {integrity: sha512-GEQWEZmfkOGLdd3XK8ryrfWz3AIP8YymVXiPHEdewrUq7mh0qrKrfHLNCXcbB6sTnMLnOZ3ztSiKcciFUkIJwQ==}
 
   monaco-editor@0.56.0:
     resolution: {integrity: sha512-sXboRm3BeBeLm938eaiyLMe0OxzfXIlZvbv4ir/jVgQy1zDhWjgmny0WoN45fuDKhCCQsYMbBJrv/A6jd8aCUg==}
@@ -7549,7 +7574,7 @@ snapshots:
     dependencies:
       json-schema: 0.4.0
 
-  '@anthropic-ai/sandbox-runtime@0.0.71':
+  '@anthropic-ai/sandbox-runtime@0.0.73':
     dependencies:
       '@pondwader/socks5-server': 1.0.10
       commander: 12.1.0
@@ -8197,27 +8222,27 @@ snapshots:
 
   '@date-fns/tz@1.5.0': {}
 
-  '@daytona/analytics-api-client@0.204.1(debug@4.4.3(supports-color@8.1.1))(supports-color@8.1.1)':
+  '@daytona/analytics-api-client@0.207.0(debug@4.4.3(supports-color@8.1.1))(supports-color@8.1.1)':
     dependencies:
       axios: 1.20.0(debug@4.4.3(supports-color@8.1.1))(supports-color@8.1.1)
     transitivePeerDependencies:
       - debug
       - supports-color
 
-  '@daytona/api-client@0.204.1(debug@4.4.3(supports-color@8.1.1))(supports-color@8.1.1)':
+  '@daytona/api-client@0.207.0(debug@4.4.3(supports-color@8.1.1))(supports-color@8.1.1)':
     dependencies:
       axios: 1.20.0(debug@4.4.3(supports-color@8.1.1))(supports-color@8.1.1)
     transitivePeerDependencies:
       - debug
       - supports-color
 
-  '@daytona/sdk@0.204.1(debug@4.4.3(supports-color@8.1.1))(supports-color@8.1.1)':
+  '@daytona/sdk@0.207.0(debug@4.4.3(supports-color@8.1.1))(supports-color@8.1.1)':
     dependencies:
       '@aws-sdk/client-s3': 3.1119.0
       '@aws-sdk/lib-storage': 3.1119.0(@aws-sdk/client-s3@3.1119.0)
-      '@daytona/analytics-api-client': 0.204.1(debug@4.4.3(supports-color@8.1.1))(supports-color@8.1.1)
-      '@daytona/api-client': 0.204.1(debug@4.4.3(supports-color@8.1.1))(supports-color@8.1.1)
-      '@daytona/toolbox-api-client': 0.204.1(debug@4.4.3(supports-color@8.1.1))(supports-color@8.1.1)
+      '@daytona/analytics-api-client': 0.207.0(debug@4.4.3(supports-color@8.1.1))(supports-color@8.1.1)
+      '@daytona/api-client': 0.207.0(debug@4.4.3(supports-color@8.1.1))(supports-color@8.1.1)
+      '@daytona/toolbox-api-client': 0.207.0(debug@4.4.3(supports-color@8.1.1))(supports-color@8.1.1)
       '@iarna/toml': 2.2.5
       '@opentelemetry/api': 1.9.1
       '@opentelemetry/exporter-trace-otlp-http': 0.221.0(@opentelemetry/api@1.9.1)
@@ -8246,7 +8271,7 @@ snapshots:
       - supports-color
       - utf-8-validate
 
-  '@daytona/toolbox-api-client@0.204.1(debug@4.4.3(supports-color@8.1.1))(supports-color@8.1.1)':
+  '@daytona/toolbox-api-client@0.207.0(debug@4.4.3(supports-color@8.1.1))(supports-color@8.1.1)':
     dependencies:
       axios: 1.20.0(debug@4.4.3(supports-color@8.1.1))(supports-color@8.1.1)
     transitivePeerDependencies:
@@ -8684,7 +8709,7 @@ snapshots:
     dependencies:
       hono: 4.13.5
 
-  '@hono/swagger-ui@0.2.2(hono@4.13.5)':
+  '@hono/swagger-ui@0.6.1(hono@4.13.5)':
     dependencies:
       hono: 4.13.5
 
@@ -9018,16 +9043,16 @@ snapshots:
       outvariant: 1.4.3
       strict-event-emitter: 0.5.1
 
-  '@nats-io/nats-core@3.0.2':
+  '@nats-io/nats-core@3.4.0':
     dependencies:
       '@nats-io/nkeys': 2.0.3
-      '@nats-io/nuid': 2.0.3
+      '@nats-io/nuid': 3.0.0
 
   '@nats-io/nkeys@2.0.3':
     dependencies:
       tweetnacl: 1.0.3
 
-  '@nats-io/nuid@2.0.3': {}
+  '@nats-io/nuid@3.0.0': {}
 
   '@nodelib/fs.scandir@2.1.5':
     dependencies:
@@ -9284,6 +9309,15 @@ snapshots:
 
   '@opentelemetry/semantic-conventions@1.43.0': {}
 
+  '@openuidev/devtools@0.1.0(@openuidev/observability@0.0.4)(@openuidev/react-lang@0.2.15(@modelcontextprotocol/sdk@1.30.0(supports-color@8.1.1)(zod@4.4.3))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(zod@4.4.3))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)':
+    dependencies:
+      '@openuidev/observability': 0.0.4
+      lucide-react: 0.575.0(react@19.2.8)
+      react: 19.2.8
+      react-dom: 19.2.8(react@19.2.8)
+    optionalDependencies:
+      '@openuidev/react-lang': 0.2.15(@modelcontextprotocol/sdk@1.30.0(supports-color@8.1.1)(zod@4.4.3))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(zod@4.4.3)
+
   '@openuidev/lang-core@0.2.16(@modelcontextprotocol/sdk@1.30.0(supports-color@8.1.1)(zod@4.4.3))(zod@4.4.3)':
     dependencies:
       ci-info: 4.4.0
@@ -9291,28 +9325,33 @@ snapshots:
     optionalDependencies:
       '@modelcontextprotocol/sdk': 1.30.0(supports-color@8.1.1)(zod@4.4.3)
 
-  '@openuidev/observability@0.0.1': {}
+  '@openuidev/observability@0.0.4': {}
 
-  '@openuidev/react-headless@0.9.4(react@19.2.8)(zustand@5.0.15(@types/react@19.2.18)(react@19.2.8)(use-sync-external-store@1.6.0(react@19.2.8)))':
+  '@openuidev/react-headless@0.9.12(ai@7.0.82(zod@4.4.3))(react@19.2.8)(zustand@5.0.15(@types/react@19.2.18)(react@19.2.8)(use-sync-external-store@1.6.0(react@19.2.8)))':
     dependencies:
       '@ag-ui/core': 0.0.53
-      '@openuidev/observability': 0.0.1
+      '@openuidev/observability': 0.0.4
       react: 19.2.8
       zustand: 5.0.15(@types/react@19.2.18)(react@19.2.8)(use-sync-external-store@1.6.0(react@19.2.8))
+    optionalDependencies:
+      ai: 7.0.82(zod@4.4.3)
 
-  '@openuidev/react-lang@0.2.9(@modelcontextprotocol/sdk@1.30.0(supports-color@8.1.1)(zod@4.4.3))(react@19.2.8)(zod@4.4.3)':
+  '@openuidev/react-lang@0.2.15(@modelcontextprotocol/sdk@1.30.0(supports-color@8.1.1)(zod@4.4.3))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(zod@4.4.3)':
     dependencies:
+      '@openuidev/devtools': 0.1.0(@openuidev/observability@0.0.4)(@openuidev/react-lang@0.2.15(@modelcontextprotocol/sdk@1.30.0(supports-color@8.1.1)(zod@4.4.3))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(zod@4.4.3))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@openuidev/lang-core': 0.2.16(@modelcontextprotocol/sdk@1.30.0(supports-color@8.1.1)(zod@4.4.3))(zod@4.4.3)
+      '@openuidev/observability': 0.0.4
       react: 19.2.8
       zod: 4.4.3
     optionalDependencies:
       '@modelcontextprotocol/sdk': 1.30.0(supports-color@8.1.1)(zod@4.4.3)
+      react-dom: 19.2.8(react@19.2.8)
 
-  '@openuidev/react-ui@0.13.3(@openuidev/react-headless@0.9.4(react@19.2.8)(zustand@5.0.15(@types/react@19.2.18)(react@19.2.8)(use-sync-external-store@1.6.0(react@19.2.8))))(@openuidev/react-lang@0.2.9(@modelcontextprotocol/sdk@1.30.0(supports-color@8.1.1)(zod@4.4.3))(react@19.2.8)(zod@4.4.3))(@types/react-dom@19.2.5(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(supports-color@8.1.1)(zod@4.4.3)(zustand@5.0.15(@types/react@19.2.18)(react@19.2.8)(use-sync-external-store@1.6.0(react@19.2.8)))':
+  '@openuidev/react-ui@0.13.9(@openuidev/react-headless@0.9.12(ai@7.0.82(zod@4.4.3))(react@19.2.8)(zustand@5.0.15(@types/react@19.2.18)(react@19.2.8)(use-sync-external-store@1.6.0(react@19.2.8))))(@openuidev/react-lang@0.2.15(@modelcontextprotocol/sdk@1.30.0(supports-color@8.1.1)(zod@4.4.3))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(zod@4.4.3))(@types/react-dom@19.2.5(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(supports-color@8.1.1)(zod@4.4.3)(zustand@5.0.15(@types/react@19.2.18)(react@19.2.8)(use-sync-external-store@1.6.0(react@19.2.8)))':
     dependencies:
       '@floating-ui/react-dom': 2.1.9(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
-      '@openuidev/react-headless': 0.9.4(react@19.2.8)(zustand@5.0.15(@types/react@19.2.18)(react@19.2.8)(use-sync-external-store@1.6.0(react@19.2.8)))
-      '@openuidev/react-lang': 0.2.9(@modelcontextprotocol/sdk@1.30.0(supports-color@8.1.1)(zod@4.4.3))(react@19.2.8)(zod@4.4.3)
+      '@openuidev/react-headless': 0.9.12(ai@7.0.82(zod@4.4.3))(react@19.2.8)(zustand@5.0.15(@types/react@19.2.18)(react@19.2.8)(use-sync-external-store@1.6.0(react@19.2.8)))
+      '@openuidev/react-lang': 0.2.15(@modelcontextprotocol/sdk@1.30.0(supports-color@8.1.1)(zod@4.4.3))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)(zod@4.4.3)
       '@radix-ui/react-accordion': 1.2.20(@types/react-dom@19.2.5(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@radix-ui/react-aspect-ratio': 1.1.15(@types/react-dom@19.2.5(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@radix-ui/react-checkbox': 1.3.11(@types/react-dom@19.2.5(@types/react@19.2.18))(@types/react@19.2.18)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
@@ -13262,6 +13301,14 @@ snapshots:
     dependencies:
       react: 19.2.8
 
+  lucide-react@0.575.0(react@19.2.8):
+    dependencies:
+      react: 19.2.8
+
+  lucide-react@0.577.0(react@19.2.8):
+    dependencies:
+      react: 19.2.8
+
   luxon@3.7.2: {}
 
   lz-string@1.5.0: {}
@@ -13727,8 +13774,6 @@ snapshots:
       ufo: 1.6.4
 
   module-details-from-path@1.0.4: {}
-
-  monaco-editor@0.52.2: {}
 
   monaco-editor@0.56.0:
     dependencies:
@@ -15158,9 +15203,9 @@ snapshots:
     transitivePeerDependencies:
       - rollup
 
-  vite-plugin-monaco-editor-esm@2.0.3(monaco-editor@0.52.2):
+  vite-plugin-monaco-editor-esm@2.0.3(monaco-editor@0.56.0):
     dependencies:
-      monaco-editor: 0.52.2
+      monaco-editor: 0.56.0
 
   vite-plugin-svgr@5.2.0(rollup@4.62.2)(supports-color@8.1.1)(typescript@5.9.3)(vite@6.4.3(@types/node@20.19.43)(jiti@2.7.0)(lightningcss@1.32.0)(terser@5.51.0)(tsx@4.23.12)(yaml@2.9.0)):
     dependencies:
