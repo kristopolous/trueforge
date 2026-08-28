@@ -97,7 +97,7 @@ describe('schedule RBAC — creator-scoped, admin sees all', () => {
     expect((await app.request('/01jqzz000000000000000nope/runs')).status).toBe(404);
   });
 
-  it('lets an admin see and manage any user\'s schedule', async () => {
+  it("lets an admin see and manage any user's schedule", async () => {
     const { app, asUser, postJson } = await setup();
 
     asUser(ALICE);

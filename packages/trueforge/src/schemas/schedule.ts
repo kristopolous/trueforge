@@ -60,7 +60,10 @@ export const TimezoneSchema = z
  */
 const IsoTimestamp = z.iso.datetime().openapi({ type: 'string', format: 'date-time' });
 
-const NullableIsoTimestamp = z.iso.datetime().nullable().openapi({ type: ['string', 'null'], format: 'date-time' });
+const NullableIsoTimestamp = z.iso
+  .datetime()
+  .nullable()
+  .openapi({ type: ['string', 'null'], format: 'date-time' });
 
 export const ScheduleTaskSchema = z
   .string()
