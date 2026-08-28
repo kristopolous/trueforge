@@ -28,12 +28,15 @@ export async function ensureTrueforgeSchema(db: Kysely<Database>): Promise<void>
   await db.connection().execute(async conn => {
     await sql`SELECT pg_advisory_lock(hashtext('trueforge_schema_bootstrap'))`.execute(conn);
     try {
-      await sql`CREATE SCHEMA IF NOT EXISTS ${sql.id(TRUEFORGE_SCHEMA)}`.execute(conn);
-      for (const tableName of TABLES_TO_MOVE) {
-        await sql`
-          ALTER TABLE IF EXISTS ${sql.id('public', tableName)} SET SCHEMA ${sql.id(TRUEFORGE_SCHEMA)}
-        `.execute(conn);
-      }
+      await conn.transaction().execute(async trx => {
+        await sql`SET LOCAL lock_timeout = '5s'`.execute(trx);
+        await sql`CREATE SCHEMA IF NOT EXISTS ${sql.id(TRUEFORGE_SCHEMA)}`.execute(trx);
+        for (const tableName of TABLES_TO_MOVE) {
+          await sql`
+            ALTER TABLE IF EXISTS ${sql.id('public', tableName)} SET SCHEMA ${sql.id(TRUEFORGE_SCHEMA)}
+          `.execute(trx);
+        }
+      });
     } finally {
       await sql`SELECT pg_advisory_unlock(hashtext('trueforge_schema_bootstrap'))`.execute(conn);
     }
