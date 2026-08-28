@@ -33,15 +33,6 @@ export function cronRunName(scheduledFor: Date): string {
   return `sched-${String(Math.floor(scheduledFor.getTime() / 1000))}`;
 }
 
-/**
- * `manual-<token>` for a run-now trigger. Unlike {@link cronRunName} it carries no
- * trigger instant — a manual run has no cron slot to be idempotent against — so the
- * token is a fresh ulid, letting two manual triggers of the same schedule coexist.
- */
-export function manualRunName(): string {
-  return `manual-${ulid().toLowerCase()}`;
-}
-
 export interface ScheduleRecord {
   id: string;
   tenant_id: string;

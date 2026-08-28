@@ -11,7 +11,6 @@ import {
   GetScheduleResponseSchema,
   ListScheduleRunsResponseSchema,
   ListSchedulesResponseSchema,
-  ScheduleRunResponseSchema,
   UpdateScheduleRequestSchema,
 } from '../schemas/schedule';
 import { OpenApiTag } from './openapiTags';
@@ -65,34 +64,6 @@ export const listScheduleRunsRoute = createRoute({
     200: {
       content: { 'application/json': { schema: ListScheduleRunsResponseSchema } },
       description: 'Runs of the schedule.',
-    },
-    403: {
-      content: { 'application/json': { schema: RequestErrorResponseSchema } },
-      description: 'The caller is not the schedule creator.',
-    },
-    404: {
-      content: { 'application/json': { schema: RequestErrorResponseSchema } },
-      description: 'Not found.',
-    },
-  },
-});
-
-export const triggerScheduleRunRoute = createRoute({
-  method: 'post',
-  path: '/{schedule_id}/runs',
-  tags: [OpenApiTag.SCHEDULES],
-  summary: 'Trigger a run now',
-  description:
-    'Trigger a run of the schedule immediately, independent of its cron and status.',
-  'x-fern-sdk-group-name': ['schedules'],
-  'x-fern-sdk-method-name': 'trigger_run',
-  request: {
-    params: ScheduleIdParamsSchema,
-  },
-  responses: {
-    201: {
-      content: { 'application/json': { schema: ScheduleRunResponseSchema } },
-      description: 'The triggered run.',
     },
     403: {
       content: { 'application/json': { schema: RequestErrorResponseSchema } },

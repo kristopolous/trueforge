@@ -60,6 +60,8 @@ export const TimezoneSchema = z
  */
 const IsoTimestamp = z.iso.datetime().openapi({ type: 'string', format: 'date-time' });
 
+const NullableIsoTimestamp = z.iso.datetime().nullable().openapi({ type: ['string', 'null'], format: 'date-time' });
+
 export const ScheduleTaskSchema = z
   .string()
   .trim()
@@ -127,7 +129,7 @@ export const ScheduleRunSchema = z
     scheduled_for: IsoTimestamp,
     status: ScheduleRunStatusSchema,
     triggered_by: z.string(),
-    triggered_at: IsoTimestamp.nullable(),
+    triggered_at: NullableIsoTimestamp,
     created_at: IsoTimestamp,
     updated_at: IsoTimestamp,
   })
@@ -137,8 +139,6 @@ export const ScheduleRunSchema = z
 export const ListScheduleRunsResponseSchema = z
   .object({ data: z.array(ScheduleRunSchema) })
   .openapi('ListScheduleRunsResponse');
-
-export const ScheduleRunResponseSchema = z.object({ data: ScheduleRunSchema }).openapi('ScheduleRunResponse');
 
 export type ScheduleStatus = z.infer<typeof ScheduleStatusSchema>;
 export type ScheduleManifest = z.infer<typeof ScheduleManifestSchema>;

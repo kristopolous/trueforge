@@ -6,7 +6,6 @@ import type { Context } from 'hono';
 import type { UserContext } from '../auth/identity';
 import type { IAgentStore } from '../db/agentStore';
 import {
-  manualRunName,
   ScheduleNameConflictError,
   ScheduleRunConflictError,
   type IScheduleStore,
@@ -21,7 +20,6 @@ import {
   listScheduleRunsRoute,
   listSchedulesRoute,
   putScheduleRoute,
-  triggerScheduleRunRoute,
 } from '../routes/scheduleRoutes';
 import { minIntervalSeconds, nextTriggerAfter } from '../runtime/cron';
 import {
