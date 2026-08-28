@@ -13,16 +13,12 @@
  *
  * Implementations: PostgresScheduleStore and SqliteScheduleStore.
  */
-import { ScheduleManifestSchema, type ScheduleManifest, type ScheduleStatus } from '../schemas/schedule';
-
-/**
- * Run lifecycle.
- * - `scheduled`  the one pending run; at most one per schedule, enforced by
- *                `schedule_run_pending_uq`
- * - `triggered`  taken by dispatch via `updateRunStatus`
- * - `failed`     errored, or hand-off to the executor failed
- */
-export type ScheduleRunStatus = 'scheduled' | 'triggered' | 'failed';
+import {
+  ScheduleManifestSchema,
+  type ScheduleManifest,
+  type ScheduleRunStatus,
+  type ScheduleStatus,
+} from '../schemas/schedule';
 
 /**
  * `sched-<unixSeconds>` or `manual-<token>` — one name per trigger time, which is what makes

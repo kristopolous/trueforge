@@ -122,6 +122,13 @@ export const GetScheduleResponseSchema = z.object({ data: ScheduleSchema }).open
 export const ListSchedulesResponseSchema = z.object({ data: z.array(ScheduleSchema) }).openapi('ListSchedulesResponse');
 export const DeleteScheduleResponseSchema = z.object({}).openapi('DeleteScheduleResponse');
 
+/**
+ * Run lifecycle.
+ * - `scheduled`  the one pending run; at most one per schedule, enforced by
+ *                `schedule_run_pending_uq`
+ * - `triggered`  taken by dispatch via `updateRunStatus`
+ * - `failed`     errored, or hand-off to the executor failed
+ */
 export const ScheduleRunStatusSchema = z.enum(['scheduled', 'triggered', 'failed']).openapi('ScheduleRunStatus');
 
 export const ScheduleRunSchema = z
@@ -144,6 +151,7 @@ export const ListScheduleRunsResponseSchema = z
   .openapi('ListScheduleRunsResponse');
 
 export type ScheduleStatus = z.infer<typeof ScheduleStatusSchema>;
+export type ScheduleRunStatus = z.infer<typeof ScheduleRunStatusSchema>;
 export type ScheduleManifest = z.infer<typeof ScheduleManifestSchema>;
 export type Schedule = z.infer<typeof ScheduleSchema>;
 export type ScheduleRun = z.infer<typeof ScheduleRunSchema>;

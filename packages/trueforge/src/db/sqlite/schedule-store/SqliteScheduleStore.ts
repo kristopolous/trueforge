@@ -1,7 +1,7 @@
 import type { ExpressionBuilder, Kysely, Transaction } from 'kysely';
 import { ulid } from 'ulid';
 import { nextTriggerAfter } from '../../../runtime/cron';
-import type { ScheduleManifest, ScheduleStatus } from '../../../schemas/schedule';
+import type { ScheduleManifest, ScheduleRunStatus, ScheduleStatus } from '../../../schemas/schedule';
 import {
   cronRunName,
   parseStoredScheduleManifest,
@@ -20,7 +20,6 @@ import {
   type ListSchedulesInput,
   type ScheduleRecord,
   type ScheduleRunRecord,
-  type ScheduleRunStatus,
   type ScheduleWriteResult,
   type UpdateScheduleInput,
   type UpdateScheduleRunStatusInput,

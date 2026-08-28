@@ -4,11 +4,10 @@ import {
   type IScheduleStore,
   type ScheduleDispatchItem,
   type ScheduleRunRecord,
-  type ScheduleRunStatus,
 } from '../db/scheduleStore';
 import type { WithTransaction } from '../db/transaction';
 import { nextTriggerAfter } from '../runtime/cron';
-import { InvalidCronError } from '../schemas/schedule';
+import { InvalidCronError, type ScheduleRunStatus } from '../schemas/schedule';
 import type { ControlLoop } from './Controller';
 
 /**
