@@ -1,5 +1,18 @@
 # @truefoundry/trueforge
 
+## 0.2.0-rc.1
+
+### Minor Changes
+
+- a3a1395: Adds first-class cron schedules for existing agents: persist them, manage them via /api/v1/schedules, validate cron policy at write time, and advance due runs through a single-dispatcher claim path.
+
+### Patch Changes
+
+- a60f4c2: Add GET /api/v1/agents/{agent_id}/code-snippets with TypeScript TrueForge SDK stream and non-stream samples.
+- c40129c: Cap Daytona status-refresh calls at 1 minute so a stalled provider cannot hang request handlers.
+- Updated dependencies [c40129c]
+  - @truefoundry/trueforge-core@0.2.0-rc.1
+
 ## 0.2.0-rc.0
 
 ### Minor Changes
