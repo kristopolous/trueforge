@@ -1,6 +1,6 @@
 import { AgentSpecSchema } from '@truefoundry/trueforge-core/agent-session';
 import type { IAgentStore } from '../../src/db/agentStore';
-import { cronRunName, type IScheduleStore } from '../../src/db/scheduleStore';
+import { cronRunName, ScheduleNameConflictError, type IScheduleStore } from '../../src/db/scheduleStore';
 import { nextTriggerAfter } from '../../src/runtime/cron';
 import { ScheduleManifestSchema, type ScheduleManifest } from '../../src/schemas/schedule';
 
@@ -171,6 +171,71 @@ export function runScheduleStoreContractSuite(deps: {
     expect(updated?.schedule.manifest.task).toBe('new task');
     expect(updated?.pendingRun).toEqual(first);
     expect(await store.getScheduledRunFor({ tenant_id: TENANT, schedule_id: schedule.id })).toEqual(first);
+  });
+
+  it('rejects a second schedule with the same name under one agent', async () => {
+    const store = deps.getScheduleStore();
+    const agent = await seedAgent();
+    const create = (name: string) =>
+      store.createScheduleAndRun({
+        tenant_id: TENANT,
+        agent_name: agent.name,
+        name,
+        manifest: manifest({ status: 'paused' }),
+        created_by: USER,
+        runFrom: new Date(),
+      });
+
+    await create('daily-report');
+    await expect(create('daily-report')).rejects.toBeInstanceOf(ScheduleNameConflictError);
+  });
+
+  it('allows the same schedule name under different agents', async () => {
+    const store = deps.getScheduleStore();
+    const [first, second] = [await seedAgent(), await seedAgent()];
+    const create = (agentName: string) =>
+      store.createScheduleAndRun({
+        tenant_id: TENANT,
+        agent_name: agentName,
+        name: 'daily-report',
+        manifest: manifest({ status: 'paused' }),
+        created_by: USER,
+        runFrom: new Date(),
+      });
+
+    await create(first.name);
+    await expect(create(second.name)).resolves.toBeDefined();
+  });
+
+  it('rejects renaming a schedule onto a name already taken for the agent', async () => {
+    const store = deps.getScheduleStore();
+    const agent = await seedAgent();
+    await store.createScheduleAndRun({
+      tenant_id: TENANT,
+      agent_name: agent.name,
+      name: 'taken',
+      manifest: manifest({ status: 'paused' }),
+      created_by: USER,
+      runFrom: new Date(),
+    });
+    const { schedule: other } = await store.createScheduleAndRun({
+      tenant_id: TENANT,
+      agent_name: agent.name,
+      name: 'free',
+      manifest: manifest({ status: 'paused' }),
+      created_by: USER,
+      runFrom: new Date(),
+    });
+
+    await expect(
+      store.updateScheduleAndRun({
+        tenant_id: TENANT,
+        id: other.id,
+        name: 'taken',
+        manifest: manifest({ status: 'paused' }),
+        runFrom: new Date(),
+      }),
+    ).rejects.toBeInstanceOf(ScheduleNameConflictError);
   });
 
   it('updating cron while paused leaves no pending run', async () => {

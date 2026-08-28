@@ -37,7 +37,7 @@ export interface ScheduleRecord {
   tenant_id: string;
   /** Immutable FK to `agent.name` (with tenant); agent version resolves at run time. */
   agent_name: string;
-  /** Display label; not unique. */
+  /** Slug-shaped label, unique per agent (`schedule_name_uq`). */
   name: string;
   manifest: ScheduleManifest;
   status: ScheduleStatus;
@@ -160,6 +160,24 @@ export class ScheduleRunConflictError extends Error {
   constructor(message: string, options?: ErrorOptions) {
     super(message, options);
     this.name = 'ScheduleRunConflictError';
+  }
+}
+
+/** Schedule name already taken for this agent — violates `schedule_name_uq`. */
+export class ScheduleNameConflictError extends Error {
+  readonly tenant_id: string;
+  readonly agent_name: string;
+  readonly schedule_name: string;
+
+  constructor(
+    { tenant_id, agent_name, name }: { tenant_id: string; agent_name: string; name: string },
+    options?: ErrorOptions,
+  ) {
+    super(`Schedule name already exists for agent ${agent_name}: ${name}`, options);
+    this.name = 'ScheduleNameConflictError';
+    this.tenant_id = tenant_id;
+    this.agent_name = agent_name;
+    this.schedule_name = name;
   }
 }
 

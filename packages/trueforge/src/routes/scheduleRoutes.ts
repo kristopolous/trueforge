@@ -72,7 +72,7 @@ export const createScheduleRoute = createRoute({
     },
     409: {
       content: { 'application/json': { schema: RequestErrorResponseSchema } },
-      description: 'The schedule was modified concurrently (usually the controller advancing it). Retry.',
+      description: 'The name is already taken for this agent, or the schedule was modified concurrently (retry).',
     },
   },
 });
@@ -126,7 +126,7 @@ export const putScheduleRoute = createRoute({
     },
     409: {
       content: { 'application/json': { schema: RequestErrorResponseSchema } },
-      description: 'The schedule was modified concurrently (usually the controller advancing it). Retry.',
+      description: 'The name is already taken for this agent, or the schedule was modified concurrently (retry).',
     },
     404: {
       content: { 'application/json': { schema: RequestErrorResponseSchema } },

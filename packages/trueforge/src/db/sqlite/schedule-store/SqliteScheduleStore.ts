@@ -5,6 +5,7 @@ import type { ScheduleManifest, ScheduleStatus } from '../../../schemas/schedule
 import {
   cronRunName,
   parseStoredScheduleManifest,
+  ScheduleNameConflictError,
   ScheduleRunConflictError,
   shouldSyncPendingRun,
   type CreateScheduleInput,
@@ -117,22 +118,33 @@ export class SqliteScheduleStore implements IScheduleStore<Transaction<Database>
   ): Promise<ScheduleWriteResult> {
     const db = transaction ?? this.#db;
     const timestamp = nowIso();
-    const row = await db
-      .insertInto('schedule')
-      .values({
-        id: ulid().toLowerCase(),
-        tenant_id: input.tenant_id,
-        agent_name: input.agent_name,
-        name: input.name,
-        manifest: jsonbBind(input.manifest),
-        // Column mirrors the manifest so the dispatch scan and API reads share one value.
-        status: input.manifest.status,
-        created_by: input.created_by,
-        created_at: timestamp,
-        updated_at: timestamp,
-      })
-      .returning(scheduleColumns)
-      .executeTakeFirstOrThrow();
+    let row;
+    try {
+      row = await db
+        .insertInto('schedule')
+        .values({
+          id: ulid().toLowerCase(),
+          tenant_id: input.tenant_id,
+          agent_name: input.agent_name,
+          name: input.name,
+          manifest: jsonbBind(input.manifest),
+          // Column mirrors the manifest so the dispatch scan and API reads share one value.
+          status: input.manifest.status,
+          created_by: input.created_by,
+          created_at: timestamp,
+          updated_at: timestamp,
+        })
+        .returning(scheduleColumns)
+        .executeTakeFirstOrThrow();
+    } catch (error) {
+      if (isUniqueViolation(error)) {
+        throw new ScheduleNameConflictError(
+          { tenant_id: input.tenant_id, agent_name: input.agent_name, name: input.name },
+          { cause: error },
+        );
+      }
+      throw error;
+    }
     const schedule = toScheduleRecord(row);
     const pendingRun = await this.#syncPendingRun(schedule, input.runFrom, transaction);
     return { schedule, pendingRun };
@@ -152,18 +164,29 @@ export class SqliteScheduleStore implements IScheduleStore<Transaction<Database>
     }
 
     const db = transaction ?? this.#db;
-    const row = await db
-      .updateTable('schedule')
-      .set({
-        name: input.name,
-        manifest: jsonbBind(input.manifest),
-        status: input.manifest.status,
-        updated_at: nowIso(),
-      })
-      .where('tenant_id', '=', input.tenant_id)
-      .where('id', '=', input.id)
-      .returning(scheduleColumns)
-      .executeTakeFirst();
+    let row;
+    try {
+      row = await db
+        .updateTable('schedule')
+        .set({
+          name: input.name,
+          manifest: jsonbBind(input.manifest),
+          status: input.manifest.status,
+          updated_at: nowIso(),
+        })
+        .where('tenant_id', '=', input.tenant_id)
+        .where('id', '=', input.id)
+        .returning(scheduleColumns)
+        .executeTakeFirst();
+    } catch (error) {
+      if (isUniqueViolation(error)) {
+        throw new ScheduleNameConflictError(
+          { tenant_id: input.tenant_id, agent_name: previous.agent_name, name: input.name },
+          { cause: error },
+        );
+      }
+      throw error;
+    }
     if (row === undefined) {
       return undefined;
     }

@@ -5,7 +5,12 @@ import { OpenAPIHono, type RouteHandler } from '@hono/zod-openapi';
 import type { Context } from 'hono';
 import type { UserContext } from '../auth/identity';
 import type { IAgentStore } from '../db/agentStore';
-import { ScheduleRunConflictError, type IScheduleStore, type ScheduleRecord } from '../db/scheduleStore';
+import {
+  ScheduleNameConflictError,
+  ScheduleRunConflictError,
+  type IScheduleStore,
+  type ScheduleRecord,
+} from '../db/scheduleStore';
 import type { WithTransaction } from '../db/transaction';
 import {
   createScheduleRoute,
@@ -110,6 +115,9 @@ export function createSchedulesRouter<TTransaction>(deps: SchedulesRouterDeps<TT
         return schedule;
       });
     } catch (error) {
+      if (error instanceof ScheduleNameConflictError) {
+        return c.json({ error: { message: error.message } }, 409);
+      }
       if (error instanceof ScheduleRunConflictError) {
         return c.json({ error: { message: `${error.message}. Retry the request.` } }, 409);
       }
@@ -135,7 +143,8 @@ export function createSchedulesRouter<TTransaction>(deps: SchedulesRouterDeps<TT
    * Read-modify-write if that is not what you want.
    *
    * Agent binding is immutable — a schedule that should point at a different agent is
-   * a different schedule. `name` is editable (display only; not unique).
+   * a different schedule. `name` is editable but must stay unique within the agent;
+   * renaming onto a taken name is a 409.
    */
   const putHandler: RouteHandler<typeof putScheduleRoute> = async c => {
     const { schedule_id: scheduleId } = c.req.valid('param');
@@ -159,6 +168,9 @@ export function createSchedulesRouter<TTransaction>(deps: SchedulesRouterDeps<TT
         return result?.schedule;
       });
     } catch (error) {
+      if (error instanceof ScheduleNameConflictError) {
+        return c.json({ error: { message: error.message } }, 409);
+      }
       if (error instanceof ScheduleRunConflictError) {
         return c.json({ error: { message: `${error.message}. Retry the request.` } }, 409);
       }
