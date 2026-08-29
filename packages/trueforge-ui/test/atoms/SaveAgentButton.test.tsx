@@ -234,6 +234,61 @@ describe('SaveAgentButton', () => {
     );
   });
 
+  it('hides Delete Agent for a new (unnamed) draft', () => {
+    renderButton();
+    expect(screen.queryByRole('button', { name: 'Delete Agent' })).not.toBeInTheDocument();
+  });
+
+  it('shows Delete Agent for an existing mutable binding and deletes on confirm', async () => {
+    const deleteAgent = vi.fn(async () => undefined);
+    renderButton({
+      serverOverrides: { deleteAgent },
+      children: <BoundMutableSaveButton agentId="writer" />,
+    });
+
+    const trigger = await screen.findByRole('button', { name: 'Delete Agent' });
+    fireEvent.click(trigger);
+    const dialog = await screen.findByRole('dialog', { name: 'Delete agent' });
+    expect(within(dialog).getByText('writer')).toBeInTheDocument();
+
+    fireEvent.click(within(dialog).getByRole('button', { name: 'Delete Agent' }));
+
+    await waitFor(() => expect(deleteAgent).toHaveBeenCalledWith({ agentName: 'writer' }));
+    await waitFor(() => expect(screen.queryByRole('dialog', { name: 'Delete agent' })).not.toBeInTheDocument());
+  });
+
+  it('cancelling the delete confirmation does not call deleteAgent', async () => {
+    const deleteAgent = vi.fn(async () => undefined);
+    renderButton({
+      serverOverrides: { deleteAgent },
+      children: <BoundMutableSaveButton agentId="writer" />,
+    });
+
+    fireEvent.click(await screen.findByRole('button', { name: 'Delete Agent' }));
+    const dialog = await screen.findByRole('dialog', { name: 'Delete agent' });
+    fireEvent.click(within(dialog).getByRole('button', { name: 'Cancel' }));
+
+    await waitFor(() => expect(screen.queryByRole('dialog', { name: 'Delete agent' })).not.toBeInTheDocument());
+    expect(deleteAgent).not.toHaveBeenCalled();
+  });
+
+  it('shows an error and keeps the dialog open when deleteAgent fails', async () => {
+    const deleteAgent = vi.fn(async () => {
+      throw new Error('Agent is in use');
+    });
+    renderButton({
+      serverOverrides: { deleteAgent },
+      children: <BoundMutableSaveButton agentId="writer" />,
+    });
+
+    fireEvent.click(await screen.findByRole('button', { name: 'Delete Agent' }));
+    const dialog = await screen.findByRole('dialog', { name: 'Delete agent' });
+    fireEvent.click(within(dialog).getByRole('button', { name: 'Delete Agent' }));
+
+    expect(await within(dialog).findByRole('alert')).toHaveTextContent('Agent is in use');
+    expect(dialog).toBeInTheDocument();
+  });
+
   it('discards modal-only changes when closed', async () => {
     renderButton();
     fireEvent.click(screen.getByRole('button', { name: 'Save Agent' }));

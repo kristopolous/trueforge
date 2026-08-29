@@ -195,6 +195,9 @@ function SaveAgentButtonContent({
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const errorRef = useRef<HTMLParagraphElement>(null);
+  const [deleteOpen, setDeleteOpen] = useState(false);
+  const [deleting, setDeleting] = useState(false);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
 
   const mcpMounts = useMemo(() => editableMountsFromSpec(draftSpec?.mcpServers), [draftSpec?.mcpServers]);
   const skillMounts = useMemo(() => editableMountsFromSpec(draftSpec?.skills), [draftSpec?.skills]);
@@ -291,11 +294,46 @@ function SaveAgentButtonContent({
     shell.mode.isMutable &&
     (shell.mode.agentName !== undefined || shell.mode.agentId !== undefined);
   const triggerLabel = isUpdateMode && children === 'Save Agent' ? 'Update Agent' : children;
+  const currentAgentName = shell?.mode.status === 'active' ? (shell.mode.agentName ?? shell.mode.agentId) : undefined;
+
+  const deleteAgent = async () => {
+    if (builder === null || currentAgentName === undefined) return;
+    setDeleting(true);
+    setDeleteError(null);
+    try {
+      await builder.deleteAgent?.({ agentName: currentAgentName });
+      shell?.invalidateAgentsList();
+      // clearChat() preserves the current edit binding — the agent it points to no longer
+      // exists, so drop the binding entirely and land on a fresh draft instead.
+      shell?.selectLibraryAgent({ isMutable: true });
+      setDeleteOpen(false);
+    } catch (caught) {
+      setDeleteError(getErrorMessage(caught, 'Could not delete agent'));
+    } finally {
+      setDeleting(false);
+    }
+  };
 
   if (!visible) return null;
 
   return (
     <>
+      {isUpdateMode ? (
+        <button
+          type="button"
+          disabled={disabled || builder === null}
+          aria-label="Delete Agent"
+          className={auiButtonClass({ variant: 'outline', size: 'sm' })}
+          onClick={() => {
+            setDeleteError(null);
+            setDeleteOpen(true);
+          }}
+        >
+          <Icon name="trash" className="size-3.5" />
+          Delete Agent
+        </button>
+      ) : null}
+
       <button
         type="button"
         disabled={disabled || builder === null || agentSpec === null}
@@ -565,6 +603,53 @@ function SaveAgentButtonContent({
             </div>
           </div>
         ) : null}
+      </CenteredModal>
+
+      <CenteredModal
+        open={deleteOpen}
+        onOpenChange={next => {
+          if (!next && !deleting) {
+            setDeleteOpen(false);
+            setDeleteError(null);
+          }
+        }}
+        title="Delete agent"
+        className="md:max-w-md"
+        contentSized
+        aria-label="Delete agent"
+      >
+        <div className="px-5 py-5">
+          <p className="text-text-primary text-sm">
+            Delete <span className="font-medium">{currentAgentName}</span>? This permanently removes the agent. This
+            can&apos;t be undone.
+          </p>
+          {deleteError ? (
+            <p role="alert" className="text-failure-bg mt-3 text-sm wrap-break-word whitespace-pre-wrap">
+              {deleteError}
+            </p>
+          ) : null}
+        </div>
+        <div className="bg-card-bg sticky bottom-0 z-10 flex shrink-0 justify-end gap-2 border-t border-border px-5 py-4">
+          <button
+            type="button"
+            disabled={deleting}
+            className={auiButtonClass({ variant: 'secondary' })}
+            onClick={() => {
+              setDeleteOpen(false);
+              setDeleteError(null);
+            }}
+          >
+            Cancel
+          </button>
+          <button
+            type="button"
+            disabled={deleting}
+            className={auiButtonClass({ variant: 'destructive' })}
+            onClick={() => void deleteAgent()}
+          >
+            {deleting ? 'Deleting…' : 'Delete Agent'}
+          </button>
+        </div>
       </CenteredModal>
     </>
   );
